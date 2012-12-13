@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import re
+
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -20,14 +22,30 @@ class StreamWatcherListener(StreamListener):
 
     status_wrapper = TextWrapper(width=60, initial_indent='    ', subsequent_indent='    ')
 
+    def __init__(self):
+        StreamListener.__init__(self)
+
+        self.twitlog_name = "/home/test/Desktop/twitlog.log"
+        self.twitlog = open(self.twitlog_name, "w")  # erased each time we start
 
     def on_status(self, status):
+
         try:
-            print self.status_wrapper.fill(status.text)
-            print '\n %s  %s  via %s\n' % (status.author.screen_name, status.created_at, status.source)
+            #print self.status_wrapper.fill(status.text)
+            #print '\n %s  %s  via %s\n' % (status.author.screen_name, status.created_at, status.source)
+
+            # extracting hastags
+            res = re.findall(r"#(\w+)", status.text)
+            hashs = ""
+            for onehash in res:
+                hashs += " " + onehash
+
+            self.twitlog.write('\n %s  %s  via %s. Hashs = %s ' % (status.author.screen_name, status.created_at, status.source, hashs))
+
         except:
             # Catch any unicode errors while printing to console
             # and just ignore them to avoid breaking application.
+            #print "Unicode Error ! %s" % (status)
             pass
 
     def on_error(self, status_code):
@@ -115,15 +133,15 @@ class Authentification(AuthHandler):
 
 if __name__ == '__main__':
     # most trendy hashtags currently
-    trendy = ["#smartiphone5BNOLotto","#enkötüsüde","#GiveMeThatGlobeIphone5","#SilivriyeÖzgürlük","#CiteNomesFeios", "#121212concert","#ItsNotCuteWhen","#nowplaying","#Blessed","#breakoutartist"]
+    trendy = ["#smartiphone5BNOLotto", "#enkötüsüde", "#GiveMeThatGlobeIphone5", "#SilivriyeÖzgürlük", "#CiteNomesFeios",  "#121212concert", "#ItsNotCuteWhen", "#nowplaying", "#Blessed", "#breakoutartist"]
     andkey = " OR "
 
     l = StreamWatcherListener()
-    myAuth = Authentification(oauth = True)
+    myAuth = Authentification(oauth=True)
 
     stream = Stream(myAuth.get_auth(), l)
 
     print "Trends streamed will be : "
-    print tendy
+    print trendy
 
     stream.filter(track=trendy)
