@@ -100,8 +100,6 @@ class Authentification(AuthHandler):
         if len(consumer) + len(access) != 4:
             print "Error : Expecting to retrieve 4 values"
         else:
-            print consumer
-            print access
             #consumer_key, consumer_secret
             self.auth = OAuthHandler(consumer[0], consumer[1])
             #access_token, access_token_secret
@@ -121,4 +119,4 @@ if __name__ == '__main__':
     #auth = BasicAuthHandler(username, password)
 
     stream = Stream(myAuth.get_auth(), l)
-    stream.filter(track=['basketball'])
+    stream.filter(track=['#ios'])
