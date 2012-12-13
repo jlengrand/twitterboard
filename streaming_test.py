@@ -62,10 +62,10 @@ class Authentification(AuthHandler):
 
         if oauth:
             file_name = "oauth.keys"
-            self.basic_authenticate(file_name)
+            self.oauth_authenticate(file_name)
         else:
             file_name = "basic.keys"
-            self.oauth_authenticate(file_name)
+            self.basic_authenticate(file_name)
 
     def basic_authenticate(self, file_name):
         """
@@ -73,7 +73,7 @@ class Authentification(AuthHandler):
         """
         try:
             with open(file_name) as f:
-                cred = f.readine() .split(',')
+                cred = f.readline() .split(',')
         except IOError:
             print "Error  : Authentication file not found"
 
@@ -92,14 +92,16 @@ class Authentification(AuthHandler):
         """
         try:
             with open(file_name) as f:
-                consumer = f.readine() .split(',')
-                access = f.readine() .split(',')
+                consumer = f.readline() .rstrip('\n').split(',')
+                access = f.readline() .split(',')
         except IOError:
             print "Error  : Authentication file not found"
 
         if len(consumer) + len(access) != 4:
             print "Error : Expecting to retrieve 4 values"
         else:
+            print consumer
+            print access
             #consumer_key, consumer_secret
             self.auth = OAuthHandler(consumer[0], consumer[1])
             #access_token, access_token_secret
@@ -113,7 +115,7 @@ if __name__ == '__main__':
     # l = StdOutListener()
     l = StreamWatcherListener()
 
-    myAuth = Authentification(oauth = False)
+    myAuth = Authentification(oauth = True)
     #auth = OAuthHandler(consumer_key, consumer_secret)
     #auth.set_access_token(access_token, access_token_secret)
     #auth = BasicAuthHandler(username, password)
