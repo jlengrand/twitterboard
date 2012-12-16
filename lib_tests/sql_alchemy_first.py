@@ -2,6 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import mapper
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 
+# This exemple defines a complete separation of concepts, for more complex applications.
+# In our case, example 2 will probably be more handy.
 
 class User(object):
     def __init__(self, name, fullname, password):
@@ -34,3 +36,4 @@ if __name__ == '__main__':
 
     #creates first users
     ed_user = User('ed', 'Ed Jones', 'edspassword')
+    print ed_user.password
