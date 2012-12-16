@@ -31,3 +31,6 @@ if __name__ == '__main__':
 
     #maps table to class
     mapper(User, users_table)
+
+    #creates first users
+    ed_user = User('ed', 'Ed Jones', 'edspassword')
