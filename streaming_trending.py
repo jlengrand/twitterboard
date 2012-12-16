@@ -11,6 +11,10 @@ from tweepy.auth import AuthHandler
 
 from textwrap import TextWrapper
 
+# to catch ctrl + c
+import signal
+import sys
+
 # Go to http://dev.twitter.com and create an app.
 # The consumer key and secret will be generated for you after
 
@@ -31,8 +35,8 @@ class StreamWatcherListener(StreamListener):
     def on_status(self, status):
 
         try:
-            #print self.status_wrapper.fill(status.text)
-            #print '\n %s  %s  via %s\n' % (status.author.screen_name, status.created_at, status.source)
+            print self.status_wrapper.fill(status.text)
+            print '\n %s  %s  via %s\n' % (status.author.screen_name, status.created_at, status.source)
 
             # extracting hastags
             res = re.findall(r"#(\w+)", status.text)
@@ -131,6 +135,21 @@ class Authentification(AuthHandler):
         return self.auth
 
 
+# class UpgradedStream(Stream):
+#     def __init__(self, auth, listener, **options):
+#         Stream.__init__(self, auth, listener, **options)
+#         #registering signal
+#         signal.signal(signal.SIGINT, self.signal_handler)
+#         signal.pause()
+
+#     def signal_handler(self, signal, frame):
+#         """
+#         Used to catch CTRL + C and exit in a clean way
+#         """
+#         print "You pressed CTRL + C"
+#         self.disconnect()
+#         sys.exit(0)
+
 if __name__ == '__main__':
     # most trendy hashtags currently
     trendy = ["#smartiphone5BNOLotto", "#enkötüsüde", "#GiveMeThatGlobeIphone5", "#SilivriyeÖzgürlük", "#CiteNomesFeios",  "#121212concert", "#ItsNotCuteWhen", "#nowplaying", "#Blessed", "#breakoutartist"]
@@ -139,6 +158,7 @@ if __name__ == '__main__':
     l = StreamWatcherListener()
     myAuth = Authentification(oauth=True)
 
+    #stream = UpgradedStream(myAuth.get_auth(), l)
     stream = Stream(myAuth.get_auth(), l)
 
     print "Trends streamed will be : "
