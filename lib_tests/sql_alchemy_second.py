@@ -57,7 +57,9 @@ if __name__ == '__main__':
     #we can hard change data
     ed_user.password = 'r;oidgud'
     print session.dirty  # objects that changed
-    print session.new  #  pending objects
+    print session.new  #  pending objects    print '#######'    print '#######'
+
+
 
     # this needs ressources to the db. Should be done only when needed to save ressources
     session.commit()  # force saving changes
@@ -84,3 +86,29 @@ if __name__ == '__main__':
     print "Querying : "
     print '#######'
 
+    # using db syntax
+    print
+    for instance in session.query(User).order_by(User.id):
+        print instance.name, instance.password
+
+    print ''
+    # but also works using ORM syntax
+    for name, password in session.query(User.name, User.password):
+        print name, password
+
+    # limit and offset can be used. Easiest way is with python slices
+    for u in session.query(User).order_by(User.id)[1:3]:
+        print u
+
+
+    # there are two way to use filter :
+    # filter_by, using keyword arguments
+    for name in session.query(User.name).filter_by(fullname='Florian'):
+        print name
+    # or filter, using level class attributes and python operators
+    for name, in session.query(User.name).filter(User.fullname=='Florian'):
+        print name
+
+    # most of the time, a query returns a query object which allows making series
+    for user in session.query(User).filter(User.name=='No').filter(User.fullname=='tysurikat'):
+        print user
