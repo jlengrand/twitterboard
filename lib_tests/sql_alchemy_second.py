@@ -26,7 +26,7 @@ class User(Base):
         return "<User('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
 
 if __name__ == '__main__':
-    engine_url = 'sqlite:///twiderboard.db'
+    engine_url = 'sqlite:///twiderboard_test.db'
 
     engine = create_engine(engine_url, echo=True)
 
