@@ -26,7 +26,9 @@ class User(Base):
         return "<User('%s','%s', '%s')>" % (self.name, self.fullname, self.password)
 
 if __name__ == '__main__':
-    engine = create_engine('sqlite:///twiderboard.db', echo=True)
+    engine_url = 'sqlite:///twiderboard.db'
+
+    engine = create_engine(engine_url, echo=True)
 
     Base.metadata.create_all(engine)
     # Defines a sessionmaker that will be used to create connections to the DB
@@ -42,4 +44,43 @@ if __name__ == '__main__':
 
     our_user = session.query(User).filter_by(name='No').first()
     print our_user
+
+    print ed_user == our_user
+
+    # we can add multiple elements
+    flo = User('Flo', 'Florian', 'hehe')
+    session.add_all([
+        User('Mouton', 'Julien', 'mimi'),
+        User('Coco', 'Coralie', 'bleble'),
+        flo])
+
+    #we can hard change data
+    ed_user.password = 'r;oidgud'
+    print session.dirty  # objects that changed
+    print session.new  #  pending objects
+
+    # this needs ressources to the db. Should be done only when needed to save ressources
+    session.commit()  # force saving changes
+
+    # rolling back changes
+    ed_user.name = 'Joe'
+    fake_user = User('Fake', 'User', 'None')
+    session.add(fake_user)
+
+    #querying the session shows that they re  flushed into the current transaction
+    print session.query(User).filter(User.name.in_(['Fake', 'Joe'])).all()
+    session.rollback()  # reverting changes
+
+    # checking everything correctly reverted
+    print ed_user.name
+    print flo in session
+    print ed_user
+
+    print session.query(User).filter(User.name.in_(['No', 'fakeuser'])).all()
+
+
+    # querying
+    print '#######'
+    print "Querying : "
+    print '#######'
 
