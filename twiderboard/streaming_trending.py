@@ -21,6 +21,7 @@ import sys
 # After the step above, you will be redirected to your app's page.
 # Create an access token under the the "Your access token" section
 
+root = '/home/test/Documents/twiderboard/' # TODO: do that correctly in the future
 
 class StreamWatcherListener(StreamListener):
 
@@ -29,7 +30,7 @@ class StreamWatcherListener(StreamListener):
     def __init__(self):
         StreamListener.__init__(self)
 
-        self.twitlog_name = "/home/test/Desktop/twitlog.log"
+        self.twitlog_name = root + "twitlog.log"
         self.twitlog = open(self.twitlog_name, "w")  # erased each time we start
 
     def on_status(self, status):
@@ -87,10 +88,10 @@ class Authentification(AuthHandler):
         self.auth = None
 
         if oauth:
-            file_name = "oauth.keys"
+            file_name =  root + "oauth.keys"
             self.oauth_authenticate(file_name)
         else:
-            file_name = "basic.keys"
+            file_name =  root + "basic.keys"
             self.basic_authenticate(file_name)
 
     def basic_authenticate(self, file_name):
