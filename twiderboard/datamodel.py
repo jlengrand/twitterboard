@@ -1,7 +1,10 @@
 from sql_alchemy.ext.declarative import declarative_base
+
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy import Boolean
+from sqlalchemy import DateTime
 
 engine_url = "sqlite:///twiderboard.db"
 
@@ -16,10 +19,19 @@ class Tweet(Base):
     hashtag = Column(String)  # Hashtag that is tracked
     text = Column(String)  # Content of the tweet
     author = Column(String)  # name of the tweeter
-    created = Column()  # TODO: Date at which was tweeted
-    inserted = Column()  # TODO: date at which tweet was saved in db
-    crawled = Column()  # TODO: Boolean whether or not tweet is in statistics already
+    created = Column(String)  # FIXME: Change to date. Date at which message was tweeted
+    inserted = Column(DateTime)  # Date at which tweet was saved in db
+    crawled = Column(Boolean)  # Boolean whether or not tweet is in statistics already
     source = Column(String)  # Where tweet comes from
 
-    def __init__():
-        pass
+    def __init__(self, author, created, inserted, crawled, source, hashtag, text):
+        self.author = author
+        self.created = created
+        self.crawled = crawled
+        self.inserted = inserted
+        self.source = source
+        self.hashtag = hashtag
+        self.text = text
+
+    def __repr__(self):
+        return "<%s('%s','%s', '%s')>" % (self.author, self.created, self.hashtag, self.text)
