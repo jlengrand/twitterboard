@@ -80,15 +80,17 @@ class StreamSaverListener(StreamListener):
         to be streamed
         """
         # extracting hastags
-        res = re.findall(r"#(\w+)", text)
-        hashs = ""
-        for onehash in res:
-            hashs += " " + onehash
-
+        hashs = re.findall(r"#(\w+)", text)
+        #print "HASHS : %s" % (hashs)
+        #print "ALL : %s" % (self.hashtags)
         # getting main hash
         for one_hash in hashs:
-            if one_hash in self.hashtags:
-                return one_hash
+            cur = one_hash.lowercase()
+            for trendy in self.hashtags:
+                to_cmp = trendy.lozercase().encode('utf-8')
+                if to_cmp == cur:
+                    #if ofne_hash in self.hashtags: # should take care of unicode
+                    return one_hash
 
         # No hash found
         return None
