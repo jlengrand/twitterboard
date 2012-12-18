@@ -1,4 +1,4 @@
-from sql_alchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base
 
 from sqlalchemy import Column
 from sqlalchemy import Integer
@@ -7,7 +7,6 @@ from sqlalchemy import Boolean
 from sqlalchemy import DateTime
 
 engine_url = "sqlite:///twiderboard.db"
-
 Base = declarative_base()
 
 

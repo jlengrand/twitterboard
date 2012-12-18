@@ -9,8 +9,9 @@ from streamer import Authentification
 
 # most trendy hashtags currently
 trendy = ["#smartiphone5BNOLotto", "#enkötüsüde", "#GiveMeThatGlobeIphone5", "#SilivriyeÖzgürlük", "#CiteNomesFeios",  "#121212concert", "#ItsNotCuteWhen", "#nowplaying", "#Blessed", "#breakoutartist"]
-andkey = " OR "
+engine_url = 'sqlite:///twiderboard_test.db'
 
+#l = StreamSaverListener(trendy, engine_url)
 l = StreamWatcherListener()
 myAuth = Authentification(oauth=True)
 
