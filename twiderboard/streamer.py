@@ -33,6 +33,7 @@ class StreamSaverListener(StreamListener):
     """
     def __init__(self, hashtags, engine_url):
         StreamListener.__init__(self)
+        self.cpt = 0
         self.hashtags = hashtags
         # creates engine, initiates session, tries to create tables
         engine = create_engine(engine_url, echo=True)
@@ -41,6 +42,7 @@ class StreamSaverListener(StreamListener):
         # Defines a sessionmaker that will be used to connect to the DB
         Session = sessionmaker(bind=engine)
         self.session = Session()  # bridge to the db
+        print "Finished init!"
 
     def on_status(self, status):
         """
@@ -48,24 +50,34 @@ class StreamSaverListener(StreamListener):
         """
         try:
             #tries to save tweet in database
-
+            print "Tweet !"
             main_hash = self.extract_hashtag(status.text)
 
             tweet = Tweet(status.author.screen_name,
                 status.created_at,
-                datetime.now(),
+                datetime.datetime.now(),
                 False,
                 status.source,
                 main_hash,
                 status.text)
 
-            self.session.add(tweet)
+            print tweet
 
+            self.session.add(tweet)
+            self.cpt += 1
+
+            # trying to flush if needed
+            if self.cpt >= 10:
+                self.session.commit()  # force saving changes
+                print "Commiting"
+                self.cpt = 0
+
+            print "Success"
         except:
             # Catches any unicode errors while printing to console
             # and just ignore them to avoid breaking application.
-            #print "Unicode Error ! %s" % (status)
-            pass
+            print "Unicode Error ! %s" % (status)
+            #pass
 
     def on_error(self, status_code):
         print 'An error has occured! Status code = %s' % status_code
@@ -79,21 +91,25 @@ class StreamSaverListener(StreamListener):
         Extracts the hashtag that trigerred the tweet
         to be streamed
         """
-        # extracting hastags
-        hashs = re.findall(r"#(\w+)", text)
-        #print "HASHS : %s" % (hashs)
-        #print "ALL : %s" % (self.hashtags)
-        # getting main hash
-        for one_hash in hashs:
-            cur = one_hash.lowercase()
-            for trendy in self.hashtags:
-                to_cmp = trendy.lozercase().encode('utf-8')
-                if to_cmp == cur:
-                    #if ofne_hash in self.hashtags: # should take care of unicode
-                    return one_hash
+        try:
+            # extracting hastags
+            hashs = re.findall(r"#(\w+)", text)
+            #print "HASHS : %s" % (hashs)
+            #print "ALL : %s" % (self.hashtags)
+            # getting main hash
+            for one_hash in hashs:
+                cur = one_hash.lowercase()
+                for trendy in self.hashtags:
+                    to_cmp = trendy.lozercase().encode('utf-8')
+                    if to_cmp == cur:
+                        #if ofne_hash in self.hashtags: # should take care of unicode
+                        return one_hash
 
-        # No hash found
-        return None
+            # No hash found
+            return None
+
+        except:
+            return ''
 
 class StreamWatcherListener(StreamListener):
 
