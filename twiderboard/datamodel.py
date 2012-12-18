@@ -9,6 +9,8 @@ from sqlalchemy import DateTime
 engine_url = "sqlite:///twiderboard.db"
 
 Base = declarative_base()
+
+
 class Tweet(Base):
     """
     Class that full =y represents a tweet as it is stored in the database.
