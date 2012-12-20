@@ -41,17 +41,21 @@ class Tweet(Base):
 
         self.hashtags = self.extract_hashtags()
 
+    # BETTER, but see how it works
     def extract_hashtags(self):
         """
         Extracts all the hashtags that are present in the tweet
         """
-        return re.findall(r"#(\w+)", self.text)
+        return set(part[:] for part in self.text.split() if part.startswith('#'))
+        #return re.findall(r"#(\w+)", self.text)
 
     def get_main_tag(self, trendy):
         """
         Given a list of tracked hashtag, defines the most important one
         """
-        match = [i for i in self.hashtags if i in trendy]
+        in_hashs = [i.lower() for i in self.hashtags]
+        trend_hashs = [i.lower() for i in trendy]
+        match = [i for i in in_hashs if i in trend_hashs]
         if len(match) != 0:
             self.hashtag = match[0]
 
