@@ -3,6 +3,7 @@
 
 import re
 import datetime
+import sys
 
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
@@ -16,6 +17,8 @@ from datamodel import Tweet
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from encodingUtils import EncodingUtils
 
 # Go to http://dev.twitter.com and create an app.
 # The consumer key and secret will be generated for you after
@@ -33,8 +36,11 @@ class StreamSaverListener(StreamListener):
     """
     def __init__(self, hashtags, engine_url):
         StreamListener.__init__(self)
-        self.cpt = 0
-        self.hashtags = hashtags
+        self.cpt = 0   # FIXME: test if useful
+        self.eu = EncodingUtils()
+
+        self.hashtags = self.format_hashtags(hashtags)
+
         # creates engine, initiates session, tries to create tables
         engine = create_engine(engine_url, echo=True)
         Base.metadata.create_all(engine)
@@ -42,7 +48,6 @@ class StreamSaverListener(StreamListener):
         # Defines a sessionmaker that will be used to connect to the DB
         Session = sessionmaker(bind=engine)
         self.session = Session()  # bridge to the db
-        print "Finished init!"
 
     def on_status(self, status):
         """
@@ -50,7 +55,6 @@ class StreamSaverListener(StreamListener):
         """
         try:
             #tries to save tweet in database
-            print "Tweet !"
             main_hash = self.extract_hashtag(status.text)
 
             tweet = Tweet(status.author.screen_name,
@@ -71,8 +75,6 @@ class StreamSaverListener(StreamListener):
                 self.session.commit()  # force saving changes
                 print "Commiting"
                 self.cpt = 0
-
-            print "Success"
         except:
             # Catches any unicode errors while printing to console
             # and just ignore them to avoid breaking application.
@@ -110,6 +112,13 @@ class StreamSaverListener(StreamListener):
 
         except:
             return ''
+
+
+    def format_hashtags(self, hashs):
+        """
+        Returns the same list of hashtags in unicode format
+        """
+        return [self.eu.to_unicode(has) for has in hashs]
 
 class StreamWatcherListener(StreamListener):
 
