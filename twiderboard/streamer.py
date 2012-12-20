@@ -62,8 +62,8 @@ class StreamSaverListener(StreamListener):
 
         tweet.get_main_tag(self.hashtags)
 
-        print tweet.hashtag.encode('utf-8')
-        sys.exit(0)
+        #print tweet.hashtag.encode('utf-8')
+        #sys.exit(0)
 
         self.session.add(tweet)
         self.cpt += 1
@@ -76,42 +76,18 @@ class StreamSaverListener(StreamListener):
 
     def on_error(self, status_code):
         print 'An error has occured! Status code = %s' % status_code
-        return True  # keep sstream alive
+        return True  # keeps stream alive
 
     def on_timeout(self):
         print 'Snoozing Zzzzzz'
-
-    def extract_hashtag(self, text):
-        """
-        Extracts the hashtag that trigerred the tweet
-        to be streamed
-        """
-        try:
-            # extracting hastags
-            hashs = re.findall(r"#(\w+)", text)
-            #print "HASHS : %s" % (hashs)
-            #print "ALL : %s" % (self.hashtags)
-            # getting main hash
-            for one_hash in hashs:
-                cur = one_hash.lowercase()
-                for trendy in self.hashtags:
-                    to_cmp = trendy.lozercase().encode('utf-8')
-                    if to_cmp == cur:
-                        #if ofne_hash in self.hashtags: # should take care of unicode
-                        return one_hash
-
-            # No hash found
-            return None
-
-        except:
-            return ''
-
 
     def format_hashtags(self, hashs):
         """
         Returns the same list of hashtags in unicode format
         """
         return [self.eu.to_unicode(has) for has in hashs]
+
+
 
 class StreamWatcherListener(StreamListener):
 
