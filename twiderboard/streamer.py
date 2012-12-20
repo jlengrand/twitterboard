@@ -53,7 +53,6 @@ class StreamSaverListener(StreamListener):
         """
         Each time a tweet is received
         """
-
         tweet = Tweet(status.author.screen_name,
             status.created_at,
             datetime.datetime.now(),
@@ -61,7 +60,9 @@ class StreamSaverListener(StreamListener):
             status.source,
             status.text)
 
-        print tweet.text.encode('utf-8')
+        tweet.get_main_tag(self.hashtags)
+
+        print tweet.hashtag.encode('utf-8')
         sys.exit(0)
 
         self.session.add(tweet)

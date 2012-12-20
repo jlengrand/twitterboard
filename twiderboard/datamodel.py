@@ -30,7 +30,7 @@ class Tweet(Base):
 
     def __init__(self, author, created, inserted, crawled, source, text):
         self.eu = EncodingUtils()  # used to switch to unicode
-        print "IN"
+
         self.author = self.eu.to_unicode(author)
         self.created = self.eu.to_unicode(created)
         self.crawled = crawled
@@ -40,13 +40,20 @@ class Tweet(Base):
         self.text = self.eu.to_unicode(text)
 
         self.hashtags = self.extract_hashtags()
-        print self.hashtags
 
     def extract_hashtags(self):
         """
         Extracts all the hashtags that are present in the tweet
         """
         return re.findall(r"#(\w+)", self.text)
+
+    def get_main_tag(self, trendy):
+        """
+        Given a list of tracked hashtag, defines the most important one
+        """
+        match = [i for i in self.hashtags if i in trendy]
+        if len(match) != 0:
+            self.hashtag = match[0]
 
     def __repr__(self):
         return "<%s('%s','%s', '%s')>" % (self.author, self.created, self.hashtag, self.text)
