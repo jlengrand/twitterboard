@@ -1,10 +1,13 @@
-from sqlalchemy.ext.declarative import declarative_base
+import re
 
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Boolean
 from sqlalchemy import DateTime
+
+from encodingUtils import EncodingUtils
 
 engine_url = "sqlite:///twiderboard.db"
 Base = declarative_base()
@@ -25,14 +28,25 @@ class Tweet(Base):
     crawled = Column(Boolean)  # Boolean whether or not tweet is in statistics already
     source = Column(String)  # Where tweet comes from
 
-    def __init__(self, author, created, inserted, crawled, source, hashtag, text):
-        self.author = author
-        self.created = created
+    def __init__(self, author, created, inserted, crawled, source, text):
+        self.eu = EncodingUtils()  # used to switch to unicode
+        print "IN"
+        self.author = self.eu.to_unicode(author)
+        self.created = self.eu.to_unicode(created)
         self.crawled = crawled
         self.inserted = inserted
-        self.source = source
-        self.hashtag = hashtag
-        self.text = text
+        self.source = self.eu.to_unicode(source)
+        self.hashtag = ''
+        self.text = self.eu.to_unicode(text)
+
+        self.hashtags = self.extract_hashtags()
+        print self.hashtags
+
+    def extract_hashtags(self):
+        """
+        Extracts all the hashtags that are present in the tweet
+        """
+        return re.findall(r"#(\w+)", self.text)
 
     def __repr__(self):
         return "<%s('%s','%s', '%s')>" % (self.author, self.created, self.hashtag, self.text)

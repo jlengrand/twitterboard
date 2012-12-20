@@ -53,33 +53,25 @@ class StreamSaverListener(StreamListener):
         """
         Each time a tweet is received
         """
-        try:
-            #tries to save tweet in database
-            main_hash = self.extract_hashtag(status.text)
 
-            tweet = Tweet(status.author.screen_name,
-                status.created_at,
-                datetime.datetime.now(),
-                False,
-                status.source,
-                main_hash,
-                status.text)
+        tweet = Tweet(status.author.screen_name,
+            status.created_at,
+            datetime.datetime.now(),
+            False,
+            status.source,
+            status.text)
 
-            print tweet
+        print tweet.text.encode('utf-8')
+        sys.exit(0)
 
-            self.session.add(tweet)
-            self.cpt += 1
+        self.session.add(tweet)
+        self.cpt += 1
 
-            # trying to flush if needed
-            if self.cpt >= 10:
-                self.session.commit()  # force saving changes
-                print "Commiting"
-                self.cpt = 0
-        except:
-            # Catches any unicode errors while printing to console
-            # and just ignore them to avoid breaking application.
-            print "Unicode Error ! %s" % (status)
-            #pass
+        # trying to flush if needed
+        if self.cpt >= 10:
+            self.session.commit()  # force saving changes
+            print "Commiting"
+            self.cpt = 0
 
     def on_error(self, status_code):
         print 'An error has occured! Status code = %s' % status_code
