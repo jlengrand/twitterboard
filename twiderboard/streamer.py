@@ -88,54 +88,6 @@ class StreamSaverListener(StreamListener):
         return [self.eu.to_unicode(has) for has in hashs]
 
 
-
-class StreamWatcherListener(StreamListener):
-
-    status_wrapper = TextWrapper(width=60,
-                                                        initial_indent=' ',
-                                                        subsequent_indent='  ')
-
-    def __init__(self):
-        StreamListener.__init__(self)
-
-        self.twitlog_name = root + "twitlog.log"
-        # erased each time we start
-        self.twitlog = open(self.twitlog_name, "w")
-
-    def on_status(self, status):
-
-        try:
-            #print self.status_wrapper.fill(status.text)
-            #print "STATUS : %s" % (status.text)
-            print "FILL : %s" % (self.status_wrapper.fill(status.text))
-            #print '\n %s  %s  via %s\n' % (status.author.screen_name,
-            #  status.created_at,
-            # status.source)
-
-            # extracting hastags
-            res = re.findall(r"#(\w+)", status.text)
-            hashs = ""
-            for onehash in res:
-                hashs += " " + onehash
-
-            self.twitlog.write('\n %s  %s  via %s. Hashs = %s ' %
-                (status.author.screen_name, status.created_at,
-                    status.source, hashs))
-
-        except:
-            # Catch any unicode errors while printing to console
-            # and just ignore them to avoid breaking application.
-            #print "Unicode Error ! %s" % (status)
-            pass
-
-    def on_error(self, status_code):
-        print 'An error has occured! Status code = %s' % status_code
-        return True  # keep stream alive
-
-    def on_timeout(self):
-        print 'Snoozing Zzzzzz'
-
-
 class Authentification(AuthHandler):
     """
     Extracts private connexion information to authenticate to Twitter.

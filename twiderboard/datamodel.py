@@ -1,4 +1,5 @@
 import re
+import datetime
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column
@@ -13,10 +14,33 @@ engine_url = "sqlite:///twiderboard.db"
 Base = declarative_base()
 
 
+class Member(Base):
+    """
+    Represents an entry in a leaderboard.
+    An entry in the leaderboard is fully represented by the name of the poster,
+    the number of tweets he posted and the corresponding hashtag
+    Some more information can be stored in the db, such as the last update
+    or the creation date
+    """
+    __tablename__ = "member"
+    id = Column(Integer, primary_key=True)
+    author = Column(String)  # name of the guy that tweeted
+    hashtag = Column(String)  # name of the hashtag of the tweet
+    created = Column(DateTime)  # date of creation of the member
+    updated = Column(DateTime)  # date of last count update
+    count = Column(Integer)  # Number of tweets for this couple author/hashtag
+
+    def __init__(self, author, hashtag):
+        self.author = author
+        self.hashtag = hashtag
+        self.created = datetime.datetime.now()
+        self.updated = datetime.datetime.now()  # FIXME ? What do ?
+        self.count = 0  # FIXME : When use?
+
 class Tweet(Base):
     """
-    Class that full =y represents a tweet as it is stored in the database.
-    It is different from the structure that can be found in tweepy.
+    Class that fully represents a tweet as it is stored in the database.
+    It is different from the structure that can be found in tweepy
     """
     __tablename__ = "tweets"
     id = Column(Integer, primary_key=True)
