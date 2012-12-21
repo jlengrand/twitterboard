@@ -12,7 +12,34 @@ Whatever is in this file should:
 - note the processed elements as crawled
 """
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from datamodel import Base
+from datamodel import Tweet
+
 root = '/home/test/Documents/twiderboard'
 
+
 class Counter():
-    def __init__(self):
+    def __init__(self, engine_url):
+
+        # creates engine, tries to create all the tables needed later on
+        engine = create_engine(engine_url, echo=True)
+        Base.metadata.create_all(engine)
+        # initiates session to the database, tries to create proper session
+        Session = sessionmaker(bind=engine)
+        self.session = Session()  # Bridges class to db
+
+    def count(self):
+        """
+        Every time is it called, perform a check of the database, and searches
+        for elements that have not been crawled yet
+        """
+        query = self.session.query(Tweet).order_by(Tweet.id)
+        print query.all()
+
+
+engine_url = 'sqlite:///twiderboard.db'
+c = Counter(engine_url)
+c.count()

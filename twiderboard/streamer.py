@@ -3,14 +3,11 @@
 
 import re
 import datetime
-import sys
 
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy.auth import BasicAuthHandler
 from tweepy.auth import AuthHandler
-
-from textwrap import TextWrapper
 
 from datamodel import Base
 from datamodel import Tweet

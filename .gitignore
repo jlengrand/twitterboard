@@ -3,4 +3,3 @@ basic.keys
 *.log
 lib_tests/tweepy
 *.pyc
-*.db
