@@ -37,8 +37,11 @@ class Counter():
         for elements that have not been crawled yet
         """
         query = self.session.query(Tweet).order_by(Tweet.id)
-        print query.all()
-
+        #print query.all()
+        #print query
+        #query.all()
+        for tweet in query:
+            print tweet.hashtag, tweet.author
 
 engine_url = 'sqlite:///twiderboard.db'
 c = Counter(engine_url)
