@@ -17,6 +17,7 @@ from sqlalchemy.orm import sessionmaker
 
 from datamodel import Base
 from datamodel import Tweet
+from datamodel import Member
 
 root = '/home/test/Documents/twiderboard'
 
@@ -31,10 +32,10 @@ class Counter():
         Session = sessionmaker(bind=engine)
         self.session = Session()  # Bridges class to db
 
-    def count(self):
+    def display(self):
         """
-        Every time is it called, perform a check of the database, and searches
-        for elements that have not been crawled yet
+        Every time is it called, perform a check of the database, searches
+        for elements that have not been crawled yet and displays them.
         """
         query = self.session.query(Tweet).order_by(Tweet.id)
         #print query.all()
@@ -42,6 +43,35 @@ class Counter():
         #query.all()
         for tweet in query:
             print tweet.hashtag, tweet.author
+
+    def count(self):
+        """
+        Every time is it called, perform a check of the database, searches
+        for elements that have not been crawled yet.
+        They are then added to the members database.
+        """
+        t_query = self.session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
+        #print query.all()
+        #print query
+        #query.all()
+        #for tweet in t_query:
+        tweet = t_query[0]
+        if True:
+            t_hash = tweet.hashtag
+            t_auth = tweet.author
+            print "###"
+            print t_auth, t_hash
+            m_query = self.session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
+
+            # Checking if we already have such a member
+            reslen = len(m_query.all())
+            if reslen == 1:
+                print "I found a member. I have to update it"
+            elif reslen == 0:
+                print "I have to create a new member."
+            else:
+                print "Error, can't get more than one member. Exiting"
+                raise Exception
 
 engine_url = 'sqlite:///twiderboard.db'
 c = Counter(engine_url)
