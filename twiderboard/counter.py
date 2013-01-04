@@ -73,7 +73,7 @@ class Counter():
                     #print "Error, can't get more than one member. Exiting"
                     raise ElementException  # FIXME : Take care
 
-                self.flush()
+                #self.flush()
             except ElementException:
                 print "Exception on %s " % (tweet)
 
@@ -120,10 +120,19 @@ class Counter():
 
         Returns the number of Members in table
         """
+        self.member_count()
         query = self.session.query(Member).order_by(Member.id).all()
-        print "Members: %d" % (len(query))
         for q in query:
             print q
+
+    def member_count(self):
+        """
+        debug
+
+        Returns the number of Members in table
+        """
+        query = self.session.query(Member).order_by(Member.id).all()
+        print "Members: %d" % (len(query))
 
     def flush(self):
         """
@@ -148,4 +157,5 @@ class ElementException(Exception):
 
 c = Counter(engine_url)
 c.count()
-#c.member_show()
+c.member_count()
+c.member_show()

@@ -124,7 +124,6 @@ class Tweet(Base):
         return (len(self.hashtag) != 0 and self.hashtag is not None)
 
     def __repr__(self):
-            # FIXME: Solve this!
             try:
                 return "<%s('%s','%s', '%s')>" % (self.author.encode('utf-8'), self.created.encode('utf-8'), self.hashtag.encode('utf-8'), self.text.encode('utf-8'))
             except UnicodeDecodeError:
