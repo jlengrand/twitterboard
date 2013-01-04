@@ -22,6 +22,7 @@ from datamodel import Member
 from data import debug
 from data import engine_url
 
+
 class Counter():
     def __init__(self, engine_url):
 
@@ -52,8 +53,10 @@ class Counter():
         They are then added to the members database.
         """
         t_query = self.session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
-        tweet = t_query[0]
-        if True:
+        tweets = t_query.all()
+        print "New counts to perform : %d" % (len(tweets))
+
+        for tweet in tweets:
             t_hash = tweet.hashtag
             t_auth = tweet.author
             m_query = self.session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
@@ -62,12 +65,33 @@ class Counter():
             reslen = len(m_query.all())
             if reslen == 1:
                 print "I found a member. I have to update it"
+                self.update(m_query.first(), tweet)
             elif reslen == 0:
                 print "I have to create a new member."
                 self.create(tweet)
             else:
                 print "Error, can't get more than one member. Exiting"
                 raise Exception
+
+            self.flush()
+
+    def update(self, member, tweet):
+        """
+        Updates member values.
+        Increments counter by 1, and changes updated field
+        """
+        if (member.has_author() and member.has_hashtag()):
+            member.update()
+            self.session.add(member)
+
+            # sets tweet to crawled state
+            tweet.crawled = True
+            self.session.add(tweet)
+
+            self.cpt += 1
+        else:
+            print "Cannot update Member, Member is not valid"
+            raise Exception
 
     def create(self, tweet):
         """
@@ -78,12 +102,17 @@ class Counter():
         if (tweet.has_author() and tweet.has_hashtag()):
             member = Member(tweet.author, tweet.hashtag)
             self.session.add(member)
+
+            # sets tweet to crawled state
+            tweet.crawled = True
+            self.session.add(tweet)
+
             self.cpt = 1
         else:
             print "Cannot create Member, Tweet is not valid"
             raise Exception
 
-    def member_count(self):
+    def member_show(self):
         """
         debug
 
@@ -91,7 +120,8 @@ class Counter():
         """
         query = self.session.query(Member).order_by(Member.id).all()
         print "Members: %d" % (len(query))
-
+        for q in query:
+            print q
     def flush(self):
         """
         Flushes data to db if enough data has to be updated
@@ -107,4 +137,4 @@ class Counter():
 
 c = Counter(engine_url)
 c.count()
-c.member_count()
+c.member_show()

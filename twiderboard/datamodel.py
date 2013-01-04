@@ -34,14 +34,33 @@ class Member(Base):
         self.author = author
         self.hashtag = hashtag
         self.created = datetime.datetime.now()
-        self.updated = datetime.datetime.now()  # FIXME ? What do ?
-        self.count = 0  # FIXME : When use?
+        self.updated = datetime.datetime.now()
+        self.count = 0
 
     def increment(self):
         """
         Increments the count value
         """
         self.count += 1
+
+    def update(self):
+        self.increment()
+        self.updated = datetime.datetime.now()
+
+    def has_author(self):
+        """
+        Returns True if author is not empty or null
+        """
+        return (len(self.author) != 0 and self.author is not None)
+
+    def has_hashtag(self):
+        """
+        Returns True if hashtag is not empty or null
+        """
+        return (len(self.hashtag) != 0 and self.hashtag is not None)
+
+    def __repr__(self):
+        return "<%s('%s' on'%s' last '%s') count: %s>" % (self.author, self.hashtag, self.created, self.updated, self.count)
 
 
 class Tweet(Base):
@@ -94,13 +113,13 @@ class Tweet(Base):
         """
         Returns True if author is not empty or null
         """
-        return (len(self.author) != 0 and  self.author is not None)
+        return (len(self.author) != 0 and self.author is not None)
 
     def has_hashtag(self):
         """
         Returns True if hashtag is not empty or null
         """
-        return (len(self.hashtag) != 0 and  self.hashtag is not None)
+        return (len(self.hashtag) != 0 and self.hashtag is not None)
 
     def __repr__(self):
         return "<%s('%s','%s', '%s')>" % (self.author, self.created, self.hashtag, self.text)
