@@ -112,7 +112,6 @@ class Counter():
             self.cpt = 1
         else:
             #print "Cannot create Member, Tweet is not valid"
-            #print tweet
             raise ElementException  # FIXME : Take care
 
     def member_show(self):
