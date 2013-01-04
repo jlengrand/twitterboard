@@ -51,10 +51,6 @@ class Counter():
         They are then added to the members database.
         """
         t_query = self.session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
-        #print query.all()
-        #print query
-        #query.all()
-        #for tweet in t_query:
         tweet = t_query[0]
         if True:
             t_hash = tweet.hashtag
@@ -69,9 +65,23 @@ class Counter():
                 print "I found a member. I have to update it"
             elif reslen == 0:
                 print "I have to create a new member."
+                self.create(tweet)
             else:
                 print "Error, can't get more than one member. Exiting"
                 raise Exception
+
+    def create(self, tweet):
+        """
+        Creates a new Member using data from the given Tweet
+        Called when no Member is found for the current
+        author/hashtag couple.
+        """
+        if (tweet.has_author() and tweet.has_hashtag()):
+            member = Member(tweet.author, tweet.hashtag)
+        else:
+            print "Cannot create Member, Tweet is not valid"
+            raise Exception
+
 
 engine_url = 'sqlite:///twiderboard.db'
 c = Counter(engine_url)

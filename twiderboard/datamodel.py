@@ -37,6 +37,13 @@ class Member(Base):
         self.updated = datetime.datetime.now()  # FIXME ? What do ?
         self.count = 0  # FIXME : When use?
 
+    def increment(self):
+        """
+        Increments the count value
+        """
+        self.count += 1
+
+
 class Tweet(Base):
     """
     Class that fully represents a tweet as it is stored in the database.
@@ -82,6 +89,18 @@ class Tweet(Base):
         match = [i for i in in_hashs if i in trend_hashs]
         if len(match) != 0:
             self.hashtag = match[0]
+
+    def has_author(self):
+        """
+        Returns True if author is not empty or null
+        """
+        return (len(self.author) != 0 and  self.author is not None)
+
+    def has_hashtag(self):
+        """
+        Returns True if hashtag is not empty or null
+        """
+        return (len(self.hashtag) != 0 and  self.hashtag is not None)
 
     def __repr__(self):
         return "<%s('%s','%s', '%s')>" % (self.author, self.created, self.hashtag, self.text)
