@@ -19,28 +19,29 @@ from datamodel import Base
 from datamodel import Tweet
 from datamodel import Member
 
-root = '/home/test/Documents/twiderboard'
-
+from data import debug
+from data import engine_url
 
 class Counter():
     def __init__(self, engine_url):
 
         # creates engine, tries to create all the tables needed later on
-        engine = create_engine(engine_url, echo=True)
+        engine = create_engine(engine_url, echo=debug)
         Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)
         self.session = Session()  # Bridges class to db
 
-    def display(self):
+        self.cpt = 0  # Used to force data flushing to db
+
+    def display_tweets(self):
         """
+        debug
+
         Every time is it called, perform a check of the database, searches
         for elements that have not been crawled yet and displays them.
         """
         query = self.session.query(Tweet).order_by(Tweet.id)
-        #print query.all()
-        #print query
-        #query.all()
         for tweet in query:
             print tweet.hashtag, tweet.author
 
@@ -55,12 +56,6 @@ class Counter():
         if True:
             t_hash = tweet.hashtag
             t_auth = tweet.author
-            print "###"
-            print t_auth, t_hash
-            debug = self.session.query(Member).all()
-            print "''''''''''''''''''''''"
-            for d in debug:
-                print d.author, d.hashtag
             m_query = self.session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
 
             # Checking if we already have such a member
@@ -82,28 +77,34 @@ class Counter():
         """
         if (tweet.has_author() and tweet.has_hashtag()):
             member = Member(tweet.author, tweet.hashtag)
+            self.session.add(member)
+            self.cpt = 1
         else:
             print "Cannot create Member, Tweet is not valid"
             raise Exception
 
-        self.session.add(member)
-
-        cpt = 1
-
-        # trying to flush if needed
-        if cpt >= 1: # FIXME: Raise limit later on
-            self.session.commit()  # force saving changes
-            print "Commiting"
-            cpt = 0
-
     def member_count(self):
         """
+        debug
+
         Returns the number of Members in table
         """
         query = self.session.query(Member).order_by(Member.id).all()
         print "Members: %d" % (len(query))
 
-engine_url = 'sqlite:///twiderboard.db'
+    def flush(self):
+        """
+        Flushes data to db if enough data has to be updated
+
+        FIXME: By not flushing every time, we might have doublons
+        if the same guy tweets several times with the same flag
+        """
+        limit = 1
+        if self.cpt >= limit:
+            self.session.commit()  # force saving changes
+            self.cpt = 0
+
+
 c = Counter(engine_url)
 c.count()
 c.member_count()

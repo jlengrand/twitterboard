@@ -1,7 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-import re
 import datetime
 
 from tweepy.streaming import StreamListener
@@ -17,14 +15,8 @@ from sqlalchemy.orm import sessionmaker
 
 from encodingUtils import EncodingUtils
 
-# Go to http://dev.twitter.com and create an app.
-# The consumer key and secret will be generated for you after
+from data import root
 
-# After the step above, you will be redirected to your app's page.
-# Create an access token under the the "Your access token" section
-
-#root = '/home/test/Documents/twiderboard/'  # TODO: do that correctly
-root = '/home/airballman/Documents/twiderboard/twitterboard/'  # TODO: do that correctly
 
 class StreamSaverListener(StreamListener):
     """
