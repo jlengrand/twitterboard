@@ -57,6 +57,10 @@ class Counter():
             t_auth = tweet.author
             print "###"
             print t_auth, t_hash
+            debug = self.session.query(Member).all()
+            print "''''''''''''''''''''''"
+            for d in debug:
+                print d.author, d.hashtag
             m_query = self.session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
 
             # Checking if we already have such a member
@@ -82,7 +86,24 @@ class Counter():
             print "Cannot create Member, Tweet is not valid"
             raise Exception
 
+        self.session.add(member)
+
+        cpt = 1
+
+        # trying to flush if needed
+        if cpt >= 1: # FIXME: Raise limit later on
+            self.session.commit()  # force saving changes
+            print "Commiting"
+            cpt = 0
+
+    def member_count(self):
+        """
+        Returns the number of Members in table
+        """
+        query = self.session.query(Member).order_by(Member.id).all()
+        print "Members: %d" % (len(query))
 
 engine_url = 'sqlite:///twiderboard.db'
 c = Counter(engine_url)
 c.count()
+c.member_count()
