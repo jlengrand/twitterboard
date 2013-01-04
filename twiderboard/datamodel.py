@@ -95,6 +95,8 @@ class Tweet(Base):
     def extract_hashtags(self):
         """
         Extracts all the hashtags that are present in the tweet
+        FIXME: Problem here is that we lose lots of tags because they end/start
+        with special characters!
         """
         return set(part[:] for part in self.text.split() if part.startswith('#'))
         #return re.findall(r"#(\w+)", self.text)
@@ -107,7 +109,7 @@ class Tweet(Base):
         trend_hashs = [i.lower() for i in trendy]
         match = [i for i in in_hashs if i in trend_hashs]
         if len(match) != 0:
-            self.hashtag = match[0]
+            self.hashtag = self.eu.to_unicode(match[0])
 
     def has_author(self):
         """
@@ -124,6 +126,6 @@ class Tweet(Base):
     def __repr__(self):
             # FIXME: Solve this!
             try:
-                return "<%s('%s','%s', '%s')>" % (self.author.encode("UTF-8"), self.created, self.hashtag.encode("UTF-8"), self.text.encode("UTF-8"))
+                return "<%s('%s','%s', '%s')>" % (self.author.encode('utf-8'), self.created.encode('utf-8'), self.hashtag.encode('utf-8'), self.text.encode('utf-8'))
             except UnicodeDecodeError:
                 return "Contains Unicode!!"
