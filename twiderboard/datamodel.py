@@ -122,4 +122,4 @@ class Tweet(Base):
         return (len(self.hashtag) != 0 and self.hashtag is not None)
 
     def __repr__(self):
-        return "<%s('%s','%s', '%s')>" % (self.author, self.created, self.hashtag, self.text)
+        return "<%s('%s','%s', '%s')>" % (self.author.encode("UTF-8"), self.created, self.hashtag.encode("UTF-8"), self.text.encode("UTF-8"))

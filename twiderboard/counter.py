@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 """
 This part of the application is responsible for the calculation of statistics
 that will be used in order to generate the leaderboards.
@@ -57,24 +56,26 @@ class Counter():
         print "New counts to perform : %d" % (len(tweets))
 
         for tweet in tweets:
-            t_hash = tweet.hashtag
-            t_auth = tweet.author
-            m_query = self.session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
+            try:
+                t_hash = tweet.hashtag
+                t_auth = tweet.author
+                m_query = self.session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
 
-            # Checking if we already have such a member
-            reslen = len(m_query.all())
-            if reslen == 1:
-                print "I found a member. I have to update it"
-                self.update(m_query.first(), tweet)
-            elif reslen == 0:
-                print "I have to create a new member."
-                self.create(tweet)
-            else:
-                print "Error, can't get more than one member. Exiting"
-                raise Exception
+                # Checking if we already have such a member
+                reslen = len(m_query.all())
+                if reslen == 1:
+                    print "I found a member. I have to update it"
+                    self.update(m_query.first(), tweet)
+                elif reslen == 0:
+                    print "I have to create a new member."
+                    self.create(tweet)
+                else:
+                    print "Error, can't get more than one member. Exiting"
+                    raise ElementException  # FIXME : Take care
 
-            self.flush()
-
+                self.flush()
+            except ElementException:
+                print "Exception on %s " % (tweet)
     def update(self, member, tweet):
         """
         Updates member values.
@@ -91,7 +92,7 @@ class Counter():
             self.cpt += 1
         else:
             print "Cannot update Member, Member is not valid"
-            raise Exception
+            raise ElementException  # FIXME : Take care
 
     def create(self, tweet):
         """
@@ -110,7 +111,8 @@ class Counter():
             self.cpt = 1
         else:
             print "Cannot create Member, Tweet is not valid"
-            raise Exception
+            print tweet
+            raise ElementException  # FIXME : Take care
 
     def member_show(self):
         """
@@ -122,6 +124,7 @@ class Counter():
         print "Members: %d" % (len(query))
         for q in query:
             print q
+
     def flush(self):
         """
         Flushes data to db if enough data has to be updated
@@ -134,6 +137,14 @@ class Counter():
             self.session.commit()  # force saving changes
             self.cpt = 0
 
+
+class ElementException(Exception):
+    """
+    What else do !?
+    """
+    def __init__(self):
+        Exception.__init__(self)
+        # FIXME: Better printing at least
 
 c = Counter(engine_url)
 c.count()
