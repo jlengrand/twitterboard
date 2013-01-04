@@ -64,18 +64,19 @@ class Counter():
                 # Checking if we already have such a member
                 reslen = len(m_query.all())
                 if reslen == 1:
-                    print "I found a member. I have to update it"
+                    #print "I found a member. I have to update it"
                     self.update(m_query.first(), tweet)
                 elif reslen == 0:
-                    print "I have to create a new member."
+                    #print "I have to create a new member."
                     self.create(tweet)
                 else:
-                    print "Error, can't get more than one member. Exiting"
+                    #print "Error, can't get more than one member. Exiting"
                     raise ElementException  # FIXME : Take care
 
                 self.flush()
             except ElementException:
                 print "Exception on %s " % (tweet)
+
     def update(self, member, tweet):
         """
         Updates member values.
@@ -101,7 +102,7 @@ class Counter():
         author/hashtag couple.
         """
         if (tweet.has_author() and tweet.has_hashtag()):
-            member = Member(tweet.author, tweet.hashtag)
+            member = Member(tweet.author, tweet.hashtag, 1)
             self.session.add(member)
 
             # sets tweet to crawled state
@@ -148,4 +149,4 @@ class ElementException(Exception):
 
 c = Counter(engine_url)
 c.count()
-c.member_show()
+#c.member_show()

@@ -30,12 +30,12 @@ class Member(Base):
     updated = Column(DateTime)  # date of last count update
     count = Column(Integer)  # Number of tweets for this couple author/hashtag
 
-    def __init__(self, author, hashtag):
+    def __init__(self, author, hashtag, count=0):
         self.author = author
         self.hashtag = hashtag
         self.created = datetime.datetime.now()
         self.updated = datetime.datetime.now()
-        self.count = 0
+        self.count = count
 
     def increment(self):
         """
@@ -122,4 +122,8 @@ class Tweet(Base):
         return (len(self.hashtag) != 0 and self.hashtag is not None)
 
     def __repr__(self):
-        return "<%s('%s','%s', '%s')>" % (self.author.encode("UTF-8"), self.created, self.hashtag.encode("UTF-8"), self.text.encode("UTF-8"))
+            # FIXME: Solve this!
+            try:
+                return "<%s('%s','%s', '%s')>" % (self.author.encode("UTF-8"), self.created, self.hashtag.encode("UTF-8"), self.text.encode("UTF-8"))
+            except UnicodeDecodeError:
+                return "Contains Unicode!!"
