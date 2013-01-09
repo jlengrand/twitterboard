@@ -18,8 +18,11 @@ from datamodel import Base
 from datamodel import Tweet
 from datamodel import Member
 
+from utils.timing import RepeatingTimer
 from data import debug
 from data import engine_url
+
+from time import sleep
 
 
 class Counter():
@@ -34,7 +37,22 @@ class Counter():
 
         self.cpt = 0  # Used to force data flushing to db
 
-        self.interval = 1 # repeats every second by default
+        self.interval = 10 # repeats every second by default
+
+        # element that repaeats count method periodically
+        self.count_unit = RepeatingTimer(self.interval, self.count)
+
+    def start(self):
+        """
+        Starts counting new members periodically
+        """
+        self.count_unit.start()
+
+    def stop(self):
+        """
+        Stops counting new members periodically
+        """
+        self.count_unit.stop()
 
     def set_interval(interval):
         """
@@ -59,6 +77,8 @@ class Counter():
         for elements that have not been crawled yet.
         They are then added to the members database.
         """
+        print "((((((((((((((((((((((( COUNTING )))))))))))))))))))))))))))"
+
         t_query = self.session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
         tweets = t_query.all()
         print "New counts to perform : %d" % (len(tweets))
@@ -168,6 +188,9 @@ class ElementException(Exception):
         # FIXME: Better printing at least
 
 c = Counter(engine_url)
-c.count()
+#c.count()
 #c.member_count()
-c.member_show()
+#c.member_show()
+c.start()
+sleep(100)
+c.stop()
