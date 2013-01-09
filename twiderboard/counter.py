@@ -27,20 +27,27 @@ from time import sleep
 
 class Counter():
     def __init__(self, engine_url):
-
-        # creates engine, tries to create all the tables needed later on
-        engine = create_engine(engine_url, echo=debug)
-        Base.metadata.create_all(engine)
-        # initiates session to the database, tries to create proper session
-        Session = sessionmaker(bind=engine)
-        self.session = Session()  # Bridges class to db
+        self.url = engine_url
 
         self.cpt = 0  # Used to force data flushing to db
-
-        self.interval = 10 # repeats every second by default
+        self.interval = 1  # repeats every second by default
 
         # element that repaeats count method periodically
         self.count_unit = RepeatingTimer(self.interval, self.count)
+
+    def connect(self):
+        """
+        Separated so that the method can be run in each created thread.
+        Initiates connexion to the database and starts a Session to be used to query it.
+        Returns the session used to communicate with the database
+        """
+        # creates engine, tries to create all the tables needed later on
+        engine = create_engine(self.url, echo=debug)
+        Base.metadata.create_all(engine)
+        # initiates session to the database, tries to create proper session
+        Session = sessionmaker(bind=engine)
+
+        return Session()  # Bridges class to db
 
     def start(self):
         """
@@ -54,7 +61,7 @@ class Counter():
         """
         self.count_unit.stop()
 
-    def set_interval(interval):
+    def set_interval(self, interval):
         """
         Changes the frequency at which count is called
         """
@@ -67,7 +74,8 @@ class Counter():
         Every time is it called, perform a check of the database, searches
         for elements that have not been crawled yet and displays them.
         """
-        query = self.session.query(Tweet).order_by(Tweet.id)
+        session = self.connect()
+        query = session.query(Tweet).order_by(Tweet.id)
         for tweet in query:
             print tweet.hashtag, tweet.author
 
@@ -79,7 +87,9 @@ class Counter():
         """
         print "((((((((((((((((((((((( COUNTING )))))))))))))))))))))))))))"
 
-        t_query = self.session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
+        session = self.connect()
+
+        t_query = session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
         tweets = t_query.all()
         print "New counts to perform : %d" % (len(tweets))
 
@@ -87,43 +97,43 @@ class Counter():
             try:
                 t_hash = tweet.hashtag
                 t_auth = tweet.author
-                m_query = self.session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
+                m_query = session.query(Member).filter(Member.author == t_auth).filter(Member.hashtag == t_hash)
 
                 # Checking if we already have such a member
                 reslen = len(m_query.all())
                 if reslen == 1:
                     #print "I found a member. I have to update it"
-                    self.update(m_query.first(), tweet)
+                    self.update(session, m_query.first(), tweet)
                 elif reslen == 0:
                     #print "I have to create a new member."
-                    self.create(tweet)
+                    self.create(session, tweet)
                 else:
                     #print "Error, can't get more than one member. Exiting"
                     raise ElementException  # FIXME : Take care
 
-                self.flush()
+                self.flush(session)
             except ElementException:
                 print "Exception on %s " % (tweet)
 
-    def update(self, member, tweet):
+    def update(self, session, member, tweet):
         """
         Updates member values.
         Increments counter by 1, and changes updated field
         """
         if (member.has_author() and member.has_hashtag()):
             member.update()
-            self.session.add(member)
+            session.add(member)
 
             # sets tweet to crawled state
             tweet.crawled = True
-            self.session.add(tweet)
+            session.add(tweet)
 
             self.cpt += 1
         else:
             #print "Cannot update Member, Member is not valid"
             raise ElementException  # FIXME : Take care
 
-    def create(self, tweet):
+    def create(self, session, tweet):
         """
         Creates a new Member using data from the given Tweet
         Called when no Member is found for the current
@@ -131,11 +141,11 @@ class Counter():
         """
         if (tweet.has_author() and tweet.has_hashtag()):
             member = Member(tweet.author, tweet.hashtag, 1)
-            self.session.add(member)
+            session.add(member)
 
             # sets tweet to crawled state
             tweet.crawled = True
-            self.session.add(tweet)
+            session.add(tweet)
 
             self.cpt = 1
         else:
@@ -149,8 +159,9 @@ class Counter():
         Returns the number of Members in table
         """
         print "#########################################"
+        session = self.connect()
         self.member_count()
-        query = self.session.query(Member).order_by(Member.id).all()
+        query = session.query(Member).order_by(Member.id).all()
         ptr = 0
         for q in query:
             ptr += 1
@@ -163,10 +174,11 @@ class Counter():
 
         Returns the number of Members in table
         """
-        query = self.session.query(Member).order_by(Member.id).all()
+        session = self.connect()
+        query = session.query(Member).order_by(Member.id).all()
         print "Members: %d" % (len(query))
 
-    def flush(self):
+    def flush(self, session):
         """
         Flushes data to db if enough data has to be updated
 
@@ -175,7 +187,7 @@ class Counter():
         """
         limit = 1
         if self.cpt >= limit:
-            self.session.commit()  # force saving changes
+            session.commit()  # force saving changes
             self.cpt = 0
 
 
@@ -192,5 +204,5 @@ c = Counter(engine_url)
 #c.member_count()
 #c.member_show()
 c.start()
-sleep(100)
+sleep(10)
 c.stop()
