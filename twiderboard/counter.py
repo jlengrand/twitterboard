@@ -34,6 +34,14 @@ class Counter():
 
         self.cpt = 0  # Used to force data flushing to db
 
+        self.interval = 1 # repeats every second by default
+
+    def set_interval(interval):
+        """
+        Changes the frequency at which count is called
+        """
+        self.interval = interval
+
     def display_tweets(self):
         """
         debug
