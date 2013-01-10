@@ -151,16 +151,32 @@ class HashtagLogger():
     def __init__(self, engine_url, hashtag, oauth=True):
         self.engine_url = engine_url
         self.trendy = [hashtag]
-
-        self.listener = StreamSaverListener(self.trendy, self.engine_url)
-        self.auth = Authentification(oauth=oauth)
+        self.oauth = oauth  # Boolean defining whether we use oauth or not
 
         self.stream = None
 
     def start(self):
-        self.stream = Stream(self.auth.get_auth(), self.listener)
-        self.stream.filter(track=self.trendy)
+
+        listener = StreamSaverListener(self.trendy, self.engine_url)
+        auth = Authentification(oauth=self.oauth)
+
+        self.stream = Stream(auth.get_auth(), listener)
+        self.stream.filter(track=self.trendy, async=True)
 
     def stop(self):
         if self.stream is not None:
             self.stream.disconnect()
+
+    def add_hashtag(self, hashtag):
+        """
+        Adds hashtag to the list of trendy hashtag to be listened to.
+        Hashtag is not added if already present.
+
+        The streaming connexion is reinitialized to take the new filter into
+        account.
+        """
+        if hashtag not in self.trendy:
+            self.trendy.append(hashtag)
+
+        self.stop()
+        self.start()
