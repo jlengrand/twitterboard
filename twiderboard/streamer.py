@@ -7,6 +7,8 @@ from tweepy import OAuthHandler
 from tweepy.auth import BasicAuthHandler
 from tweepy.auth import AuthHandler
 
+from tweepy import Stream
+
 from data import debug
 
 
@@ -142,3 +144,23 @@ class Authentification(AuthHandler):
 
     def get_auth(self):
         return self.auth
+
+
+#--------------------------
+class HashtagLogger():
+    def __init__(self, engine_url, hashtag, oauth=True):
+        self.engine_url = engine_url
+        self.trendy = [hashtag]
+
+        self.listener = StreamSaverListener(self.trendy, self.engine_url)
+        self.auth = Authentification(oauth=oauth)
+
+        self.stream = None
+
+    def start(self):
+        self.stream = Stream(self.auth.get_auth(), self.listener)
+        self.stream.filter(track=self.trendy)
+
+    def stop(self):
+        if self.stream is not None:
+            self.stream.disconnect()
