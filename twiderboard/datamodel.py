@@ -81,12 +81,12 @@ class Tweet(Base):
     # Boolean that is set to True if Tweet cannot be processed correctly
     invalid = Column(Boolean)
 
-    def __init__(self, author, created, inserted, crawled, source, text):
+    def __init__(self, author, created, inserted, source, text):
         self.eu = EncodingUtils()  # used to switch to unicode
 
         self.author = self.eu.to_unicode(author)
         self.created = self.eu.to_unicode(created)
-        self.crawled = crawled
+        self.crawled = False
         self.inserted = inserted
         self.source = self.eu.to_unicode(source)
         self.hashtag = ''

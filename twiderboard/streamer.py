@@ -45,7 +45,6 @@ class StreamSaverListener(StreamListener):
         tweet = Tweet(status.author.screen_name,
             status.created_at,
             datetime.datetime.now(),
-            False,
             status.source,
             status.text)
 
@@ -69,6 +68,9 @@ class StreamSaverListener(StreamListener):
 
     def on_timeout(self):
         print 'Snoozing Zzzzzz'
+
+    def on_delete(self):
+        return False
 
     def format_hashtags(self, hashs):
         """

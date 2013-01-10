@@ -130,12 +130,12 @@ class Counter():
                     raise ElementException  # FIXME : Take care
 
             except ElementException:
-                self.invalidate(Tweet)
+                self.invalidate(session, tweet)
                 self.logger.error("ElementException :  Could not process %s !" % (tweet))
 
             self.flush(session)
 
-    def invalidate(self, tweet):
+    def invalidate(self, session, tweet):
         """
         Invalidates a tweet so that it is not recrawled by the counter
         and can be verified later
