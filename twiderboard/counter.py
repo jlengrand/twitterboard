@@ -21,8 +21,9 @@ from datamodel import Member
 from utils.timing import RepeatingTimer
 from data import debug
 from data import engine_url
+from data import log_path
 
-#import logging
+import logging
 import signal
 
 
@@ -33,8 +34,31 @@ class Counter():
         self.cpt = 0  # Used to force data flushing to db
         self.interval = 1  # repeats every second by default
 
+        # sets up logger
+        self.logger = self.setup_logger()
+
         # element that repeats count method periodically
         self.count_unit = RepeatingTimer(self.interval, self.count)
+
+    def setup_logger(self):
+        """
+        Sets up logging capabilities. Defines precisely how and where logging
+        information will be displayed and saved
+        """
+        my_logger = logging.getLogger("Counter")
+
+        my_logger.setLevel(logging.DEBUG)
+        fh = logging.FileHandler(log_path)  # file part of logger
+        fh.setLevel(logging.DEBUG)
+
+        ch = logging.StreamHandler()  # console part of the logger
+        ch.setLevel(logging.DEBUG)
+
+        my_logger.addHandler(fh)
+        my_logger.addHandler(ch)
+        my_logger.info("########")   # Separate sessions
+
+        return my_logger
 
     def connect(self):
         """
@@ -62,12 +86,6 @@ class Counter():
         """
         self.count_unit.stop()
 
-    def set_interval(self, interval):
-        """
-        Changes the frequency at which count is called
-        """
-        self.interval = interval
-
     def display_tweets(self):
         """
         debug
@@ -78,7 +96,7 @@ class Counter():
         session = self.connect()
         query = session.query(Tweet).order_by(Tweet.id)
         for tweet in query:
-            print tweet.hashtag, tweet.author
+            self.logger.info(tweet.hashtag + " " + tweet.author)
 
     def count(self):
         """
@@ -86,13 +104,12 @@ class Counter():
         for elements that have not been crawled yet.
         They are then added to the members database.
         """
-        print "((((((((((((((((((((((( COUNTING )))))))))))))))))))))))))))"
-
+        self.logger.info("((((((((((((((((((((((( COUNTING )))))))))))))))))))))))))))")
         session = self.connect()
 
         t_query = session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
         tweets = t_query.all()
-        print "New counts to perform : %d" % (len(tweets))
+        self.logger.info("New counts to perform : %d" % (len(tweets)))
 
         for tweet in tweets:
             try:
@@ -103,18 +120,18 @@ class Counter():
                 # Checking if we already have such a member
                 reslen = len(m_query.all())
                 if reslen == 1:
-                    #print "I found a member. I have to update it"
+                    self.logger.info("Member found, updating. . .")
                     self.update(session, m_query.first(), tweet)
                 elif reslen == 0:
-                    #print "I have to create a new member."
+                    self.logger.info("No member found, creating. . .")
                     self.create(session, tweet)
                 else:
-                    #print "Error, can't get more than one member. Exiting"
+                    self.logger.error("ElementException :  More than one member found !")
                     raise ElementException  # FIXME : Take care
 
                 self.flush(session)
             except ElementException:
-                print "Exception on %s " % (tweet)
+                self.logger.error("ElementException :  Could not process %s !" % (tweet))
 
     def update(self, session, member, tweet):
         """
@@ -131,7 +148,7 @@ class Counter():
 
             self.cpt += 1
         else:
-            #print "Cannot update Member, Member is not valid"
+            self.logger.error("ElementException :  Cannot update Member, Member is not valid !")
             raise ElementException  # FIXME : Take care
 
     def create(self, session, tweet):
@@ -150,7 +167,7 @@ class Counter():
 
             self.cpt = 1
         else:
-            #print "Cannot create Member, Tweet is not valid"
+            self.logger.error("ElementException :  Cannot create Member, Tweet is not valid !")
             raise ElementException  # FIXME : Take care
 
     def member_show(self, num=20):
@@ -159,7 +176,8 @@ class Counter():
 
         Returns the number of Members in table
         """
-        print "#########################################"
+        self.logger.info("#########################################")
+
         session = self.connect()
         self.member_count()
         query = session.query(Member).order_by(Member.id).all()
@@ -167,7 +185,7 @@ class Counter():
         for q in query:
             ptr += 1
             if ptr < num:
-                print q
+                self.logger.info(q)
 
     def member_count(self):
         """
@@ -177,7 +195,8 @@ class Counter():
         """
         session = self.connect()
         query = session.query(Member).order_by(Member.id).all()
-        print "Members: %d" % (len(query))
+
+        self.logger.info("Members: %d" % (len(query)))
 
     def flush(self, session):
         """
