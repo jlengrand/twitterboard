@@ -22,7 +22,8 @@ from utils.timing import RepeatingTimer
 from data import debug
 from data import engine_url
 
-from time import sleep
+#import logging
+import signal
 
 
 class Counter():
@@ -32,7 +33,7 @@ class Counter():
         self.cpt = 0  # Used to force data flushing to db
         self.interval = 1  # repeats every second by default
 
-        # element that repaeats count method periodically
+        # element that repeats count method periodically
         self.count_unit = RepeatingTimer(self.interval, self.count)
 
     def connect(self):
@@ -199,10 +200,21 @@ class ElementException(Exception):
         Exception.__init__(self)
         # FIXME: Better printing at least
 
+
+# ---------
+def stop_handler(signal, frame):
+    """
+    Detects when the user presses CTRL + C and stops the count thread
+    """
+    global c
+    c.stop()
+    print "You stopped the counting!"
+
+
+# registering the signal
+signal.signal(signal.SIGINT, stop_handler)
+
+# Initiates counter and starts it
 c = Counter(engine_url)
-#c.count()
-#c.member_count()
-#c.member_show()
 c.start()
-sleep(10)
-c.stop()
+print "Press CTRL + C to stop application"
