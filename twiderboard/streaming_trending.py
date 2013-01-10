@@ -25,8 +25,13 @@ def stop_handler(signal, frame):
 # registering the signal
 signal.signal(signal.SIGINT, stop_handler)
 
-h = HashtagLogger(engine_url, "#nowplaying", oauth=True)
+h = HashtagLogger(engine_url, oauth=True)
 h.start()
 print "Press CTRL + C to stop application"
+h.add_hashtag("#nowplaying")
 h.add_hashtag("#blessed")
 h.add_hashtag("#WTF")
+sleep(2)
+h.add_hashtag("#fuck")
+
+h.remove_hashtag("#WTF")
