@@ -129,9 +129,22 @@ class Counter():
                     self.logger.error("ElementException :  More than one member found !")
                     raise ElementException  # FIXME : Take care
 
-                self.flush(session)
             except ElementException:
+                self.invalidate(Tweet)
                 self.logger.error("ElementException :  Could not process %s !" % (tweet))
+
+            self.flush(session)
+
+    def invalidate(self, tweet):
+        """
+        Invalidates a tweet so that it is not recrawled by the counter
+        and can be verified later
+        """
+        tweet.invalid = True
+        tweet.crawled = True
+        session.add(tweet)
+
+        self.cpt += 1  # indicates that we have a candidiate for the flushing
 
     def update(self, session, member, tweet):
         """

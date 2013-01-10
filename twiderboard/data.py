@@ -17,5 +17,7 @@ root = '/home/jll/Documents/code/twitterboard/'
 # TODO: do that correctly
 
 engine_url = 'sqlite:///twiderboard.db'
+
+
 log_name = 'board.log'
 log_path = os.path.join(root, log_name)

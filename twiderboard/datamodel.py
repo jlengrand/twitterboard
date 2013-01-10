@@ -78,6 +78,9 @@ class Tweet(Base):
     crawled = Column(Boolean)  # Boolean whether or not tweet is in statistics already
     source = Column(String)  # Where tweet comes from
 
+    # Boolean that is set to True if Tweet cannot be processed correctly
+    invalid = Column(Boolean)
+
     def __init__(self, author, created, inserted, crawled, source, text):
         self.eu = EncodingUtils()  # used to switch to unicode
 
@@ -91,7 +94,8 @@ class Tweet(Base):
 
         self.hashtags = self.extract_hashtags()
 
-    # BETTER, but see how it works
+        self.invalid = False  # cannot be invalid by default
+
     def extract_hashtags(self):
         """
         Extracts all the hashtags that are present in the tweet
