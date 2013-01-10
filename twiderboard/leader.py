@@ -17,6 +17,7 @@ from datamodel import Member
 from data import debug
 from data import engine_url
 
+from time import sleep
 
 class LeaderBoard():
 
@@ -41,7 +42,6 @@ class LeaderBoard():
 
     def get_leaders(self):
         """
-        FIXME: Do size = 0 means all
         Returns the current leaders of the competition for the given hashtag
         The result will be a list of twitter usernames, with the current number
         of tweets containing the hashtag they sent.
@@ -50,14 +50,23 @@ class LeaderBoard():
         """
         session = self.connect()
         l_query = session.query(Member).filter(Member.hashtag == self.hashtag).order_by(desc(Member.count))
-        if self.size == 0:
-            leaders = l_query.all()
-        else:
-            leaders = l_query.all()[0:self.size]
+        leaders = l_query.all()
+        if self.size > 0:
+            leaders = leaders[0:self.size]
 
+        return leaders
+
+    def print_leaders(self, leaders):
+        """
+        Dumps the list of leaders on the console
+        """
+        print "#########"
         for leader in leaders:
             print "%s - %d" % (leader.author, leader.count)
 
 l = LeaderBoard("#nowplaying", 10)
-l.get_leaders()
+for i in range(20):
+    leaders = l.get_leaders()
+    l.print_leaders(leaders)
+    sleep(5)
 
