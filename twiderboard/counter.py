@@ -26,7 +26,6 @@ from data import log_path
 import logging
 import signal
 
-
 class Counter():
     def __init__(self, engine_url):
         self.url = engine_url
@@ -51,11 +50,11 @@ class Counter():
         fh = logging.FileHandler(log_path)  # file part of logger
         fh.setLevel(logging.DEBUG)
 
-        ch = logging.StreamHandler()  # console part of the logger
-        ch.setLevel(logging.DEBUG)
+        #ch = logging.StreamHandler()  # console part of the logger
+        #ch.setLevel(logging.DEBUG)
 
         my_logger.addHandler(fh)
-        my_logger.addHandler(ch)
+        #my_logger.addHandler(ch)
         my_logger.info("########")   # Separate sessions
 
         return my_logger
@@ -104,7 +103,8 @@ class Counter():
         for elements that have not been crawled yet.
         They are then added to the members database.
         """
-        self.logger.info("((((((((((((((((((((((( COUNTING )))))))))))))))))))))))))))")
+        print('.')
+        self.logger.info("((((((((((((((((((((((() COUNTING )))))))))))))))))))))))))))")
         session = self.connect()
 
         t_query = session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)

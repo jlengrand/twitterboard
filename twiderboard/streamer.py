@@ -7,6 +7,9 @@ from tweepy import OAuthHandler
 from tweepy.auth import BasicAuthHandler
 from tweepy.auth import AuthHandler
 
+from data import debug
+
+
 from datamodel import Base
 from datamodel import Tweet
 
@@ -31,7 +34,7 @@ class StreamSaverListener(StreamListener):
         self.hashtags = self.format_hashtags(hashtags)
 
         # creates engine, initiates session, tries to create tables
-        engine = create_engine(engine_url, echo=True)
+        engine = create_engine(engine_url, echo=debug)
         Base.metadata.create_all(engine)
 
         # Defines a sessionmaker that will be used to connect to the DB
@@ -59,7 +62,7 @@ class StreamSaverListener(StreamListener):
         # trying to flush if needed
         if self.cpt >= 10:
             self.session.commit()  # force saving changes
-            print "Commiting"
+            print (".")
             self.cpt = 0
 
     def on_error(self, status_code):
