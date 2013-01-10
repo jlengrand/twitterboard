@@ -17,7 +17,10 @@ from datamodel import Member
 from data import debug
 from data import engine_url
 
-from time import sleep
+from utils.timing import RepeatingTimer
+
+import signal
+
 
 class LeaderBoard():
 
@@ -25,6 +28,22 @@ class LeaderBoard():
         self.url = engine_url
         self.hashtag = hashtag
         self.size = size
+
+        self.interval = 2   # Number of seconds between each leaderboard display
+
+        self.leader_unit = RepeatingTimer(self.interval, self.leaderprint)
+
+    def start(self):
+        """
+        Starts counting new members periodically
+        """
+        self.leader_unit.start()
+
+    def stop(self):
+        """
+        Stops counting new members periodically
+        """
+        self.leader_unit.stop()
 
     def connect(self):
         """
@@ -39,6 +58,14 @@ class LeaderBoard():
         Session = sessionmaker(bind=engine)
 
         return Session()  # Bridges class to db
+
+    def leaderprint(self):
+        """
+        Periodically retrieves the leaders for the given hashtag
+        and prints them out
+        """
+        leaders = self.get_leaders()
+        self.print_leaders(leaders)
 
     def get_leaders(self):
         """
@@ -64,9 +91,20 @@ class LeaderBoard():
         for leader in leaders:
             print "%s - %d" % (leader.author, leader.count)
 
-l = LeaderBoard("#nowplaying", 10)
-for i in range(20):
-    leaders = l.get_leaders()
-    l.print_leaders(leaders)
-    sleep(5)
+# ---------
+def stop_handler(signal, frame):
+    """
+    Detects when the user presses CTRL + C and stops the count thread
+    """
+    global l
+    l.stop()
+    print "You stopped the leaderboard printing!"
 
+
+# registering the signal
+signal.signal(signal.SIGINT, stop_handler)
+
+# Initiates LeaderBoard and starts it
+l = LeaderBoard("#nowplaying", 10)
+print "Press CTRL + C to stop application"
+l.start()
