@@ -52,11 +52,11 @@ class Trigger():
             self.help()
         else:
             if word.startswith("add #"):
-                hashtag = word.replace("add #", "")
-                print "hashtag is : %s" %(hashtag)
+                hashtag = word.replace("add ", "")
+                self.h.add_hashtag(hashtag)
             elif word.startswith("rm #"):
-                hashtag = word.replace("rm #", "")
-                print "hashtag is : %s" %(hashtag)
+                hashtag = word.replace("rm ", "")
+                self.h.remove_hashtag(hashtag)
             else:
                 print "Unrecognized command"
 

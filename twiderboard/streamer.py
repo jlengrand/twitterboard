@@ -64,7 +64,7 @@ class StreamSaverListener(StreamListener):
         # trying to flush if needed
         if self.cpt >= 10:
             self.session.commit()  # force saving changes
-            print (".")
+            #print (".")
             self.cpt = 0
 
     def on_error(self, status_code):
