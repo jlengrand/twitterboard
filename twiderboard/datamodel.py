@@ -13,6 +13,25 @@ from encodingUtils import EncodingUtils
 engine_url = "sqlite:///twiderboard.db"
 Base = declarative_base()
 
+class TrendyHashtag(Base):
+    """
+    Stores the list of hashtags that have been marked for tracking.
+    Keeps history of all hashtags marked in the past, using an active boolean.
+    Used for tracability and trendy hashtags sharing between Threads
+    """
+    __tablename__ = "trendy_hashtags"
+    id = Column(Integer, primary_key=True)
+    hashtag = Column(String)  # should begin with # is it is really a hashtag
+    created = Column(DateTime)
+    updated = Column(DateTime)  # used to track when is was last stopped/started
+    active = Column(Boolean)  # Whether the hashtag is currently tracked or not.
+
+    def __init__(self, hashtag, active=True):
+        self.hashtag = hashtag
+        self.active = active
+
+        self.created = datetime.datetime.now()
+        self.updated = datetime.datetime.now()
 
 class Member(Base):
     """

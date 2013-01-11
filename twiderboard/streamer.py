@@ -14,6 +14,7 @@ from data import debug
 
 from datamodel import Base
 from datamodel import Tweet
+from datamodel import TrendyHashtag
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -28,20 +29,13 @@ class StreamSaverListener(StreamListener):
     Stream that will save each tweet it receives into a database
     to be reused later
     """
-    def __init__(self, hashtags, engine_url):
+    def __init__(self, hashtags, session):
         StreamListener.__init__(self)
         self.cpt = 0   # FIXME: test if useful
         self.eu = EncodingUtils()
 
         self.hashtags = self.format_hashtags(hashtags)
-
-        # creates engine, initiates session, tries to create tables
-        engine = create_engine(engine_url, echo=debug)
-        Base.metadata.create_all(engine)
-
-        # Defines a sessionmaker that will be used to connect to the DB
-        Session = sessionmaker(bind=engine)
-        self.session = Session()  # bridge to the db
+        self.session = session  # bridge to the db
 
     def on_status(self, status):
         """
@@ -150,17 +144,38 @@ class Authentification(AuthHandler):
 class HashtagLogger():
     def __init__(self, engine_url, oauth=True):
         self.engine_url = engine_url
-        self.trendy = []
         self.oauth = oauth  # Boolean defining whether we use oauth or not
-
+        self.auth = Authentification(oauth=self.oauth)
         self.stream = None
 
-        self.auth = Authentification(oauth=self.oauth)
+        # creates engine, initiates session, tries to create tables
+        engine = create_engine(engine_url, echo=debug)
+        Base.metadata.create_all(engine)
 
+        # Defines a sessionmaker that will be used to connect to the DB
+        Session = sessionmaker(bind=engine)
+        self.session = Session()  # bridge to the db
+
+        self.trendy = self.load_hashtags()
+        #self.trendy = []
+
+    def load_hashtags(self):
+        """
+        Creates list of current trendy hashtags by loading
+        all active hashtags from database
+        """
+        h_query = self.session.query(TrendyHashtag).filter(TrendyHashtag.active == True)
+        hashtags = h_query.all()
+
+        trendy = []
+        for hashtag in hashtags:
+            trendy.append(hashtag.hashtag)
+
+        return trendy
 
     def start(self):
         if len(self.trendy) > 0:
-            listener = StreamSaverListener(self.trendy, self.engine_url)
+            listener = StreamSaverListener(self.trendy, self.session)
 
             self.stream = Stream(self.auth.get_auth(), listener)
             print self.trendy
@@ -182,7 +197,12 @@ class HashtagLogger():
         account.
         """
         if hashtag not in self.trendy:
-            self.trendy.append(hashtag)
+            # saves to db
+            trendy_hashtag = TrendyHashtag(hashtag)
+            self.session.add(trendy_hashtag)
+            self.session.commit()  # sends to db
+
+            self.trendy.append(hashtag)  # appends in list
 
         self.stop()
         self.start()
@@ -195,7 +215,23 @@ class HashtagLogger():
         account.
         """
         if hashtag in self.trendy:
-            self.trendy.remove(hashtag)
+            # removes hashtag from active list
+            h_query = self.session.query(TrendyHashtag).filter(TrendyHashtag.hashtag == hashtag).filter(TrendyHashtag.active == True)
+            hashtags = h_query.all()
+
+            if 0 == len(hashtags) > 1:
+                print "Hashtag not recorded in database!"
+            else:
+                # removes from database
+                trendy_hashtag = hashtags[0]
+                trendy_hashtag.active = False
+                trendy_hashtag.updated = datetime.datetime.now()
+
+                self.session.add(trendy_hashtag)
+                self.session.commit()
+
+                # removes from list
+                self.trendy.remove(hashtag)
 
         self.stop()
         self.start()
