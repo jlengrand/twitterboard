@@ -46,9 +46,9 @@ class Counter():
         """
         my_logger = logging.getLogger("Counter")
 
-        my_logger.setLevel(logging.DEBUG)
+        my_logger.setLevel(logging.ERROR)
         fh = logging.FileHandler(log_path)  # file part of logger
-        fh.setLevel(logging.DEBUG)
+        fh.setLevel(logging.ERROR)
 
         #ch = logging.StreamHandler()  # console part of the logger
         #ch.setLevel(logging.DEBUG)
@@ -103,14 +103,14 @@ class Counter():
         for elements that have not been crawled yet.
         They are then added to the members database.
         """
-        print('.')
+        #print('.')
         self.logger.info("((((((((((((((((((((((() COUNTING )))))))))))))))))))))))))))")
         session = self.connect()
 
         t_query = session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
         tweets = t_query.all()
         self.logger.info("New counts to perform : %d" % (len(tweets)))
-
+        # FIXME: This is blocking. It shoudnt!
         for tweet in tweets:
             try:
                 t_hash = tweet.hashtag
@@ -128,7 +128,6 @@ class Counter():
                 else:
                     self.logger.error("ElementException :  More than one member found !")
                     raise ElementException  # FIXME : Take care
-
             except ElementException:
                 self.invalidate(session, tweet)
                 self.logger.error("ElementException :  Could not process %s !" % (tweet))
@@ -234,19 +233,19 @@ class ElementException(Exception):
 
 
 # ---------
-def stop_handler(signal, frame):
-    """
-    Detects when the user presses CTRL + C and stops the count thread
-    """
-    global c
-    c.stop()
-    print "You stopped the counting!"
+# def stop_handler(signal, frame):
+#     """
+#     Detects when the user presses CTRL + C and stops the count thread
+#     """
+#     global c
+#     c.stop()
+#     print "You stopped the counting!"
 
 
-# registering the signal
-signal.signal(signal.SIGINT, stop_handler)
+# # registering the signal
+# signal.signal(signal.SIGINT, stop_handler)
 
-# Initiates counter and starts it
-c = Counter(engine_url)
-c.start()
-print "Press CTRL + C to stop application"
+# # Initiates counter and starts it
+# c = Counter(engine_url)
+# c.start()
+# print "Press CTRL + C to stop application"

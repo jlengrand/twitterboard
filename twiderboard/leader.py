@@ -100,11 +100,11 @@ def stop_handler(signal, frame):
     l.stop()
     print "You stopped the leaderboard printing!"
 
+if __name__ == '__main__':
+    # registering the signal
+    signal.signal(signal.SIGINT, stop_handler)
 
-# registering the signal
-signal.signal(signal.SIGINT, stop_handler)
-
-# Initiates LeaderBoard and starts it
-l = LeaderBoard("#nowplaying", 10)
-print "Press CTRL + C to stop application"
-l.start()
+    # Initiates LeaderBoard and starts it
+    l = LeaderBoard("#nowplaying", 10)
+    print "Press CTRL + C to stop application"
+    l.start()
