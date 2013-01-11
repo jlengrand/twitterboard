@@ -21,12 +21,12 @@ class Trigger():
 
         # starting all services
         # Streamer
-        print "streamer"
+        print "Starting streamer"
         self.h = HashtagLogger(engine_url, oauth=True)
         self.h.start()
 
         #Counter
-        print "counter"
+        print "Starting counter"
         self.c = Counter(engine_url)
         self.c.start()
 
@@ -37,8 +37,39 @@ class Trigger():
 
         print "Command Line utility started:"
         print "Press CTRL + C to stop application"
+        print "type h, help or ? to get a list of possible commands"
         while True:
-            raw_input(">")
+            res = raw_input(">")
+            self.parse(res)
+
+    def parse(self, comm):
+        """
+        Parses the command input by the user
+        and triggers the corresponding action
+        """
+        word = comm.lower()
+        if word in ["h", "help", "?"]:
+            self.help()
+        else:
+            if word.startswith("add #"):
+                hashtag = word.replace("add #", "")
+                print "hashtag is : %s" %(hashtag)
+            elif word.startswith("rm #"):
+                hashtag = word.replace("rm #", "")
+                print "hashtag is : %s" %(hashtag)
+            else:
+                print "Unrecognized command"
+
+    def help(self):
+        """
+        Prints Help message in command line
+        """
+        print "######"
+        print "add [hashtag] : adds hashtag to list of interest hashtags "
+        print "rm [hashtag] : removes hashtag from list of interest hashtags "
+        print
+        print "WARNING: hashtag always starts with #!"
+        print "######"
 
     def stop_handler(self, signal, frame):
         """
