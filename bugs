@@ -1,0 +1,1 @@
+It is possible to create the same hashtag several times in the databse. => Add existence checks

@@ -13,6 +13,7 @@ from sqlalchemy import desc
 
 from datamodel import Base
 from datamodel import Member
+from datamodel import TrendyHashtag
 
 from data import debug
 from data import engine_url
@@ -20,15 +21,16 @@ from data import engine_url
 from utils.timing import RepeatingTimer
 
 import signal
+import datetime
 
 
 class LeaderBoard():
-    def __init__(self, hashtag=None, size=10):
+    def __init__(self, hashtag=None, size=10, interval=1):
         self.url = engine_url
         self.hashtag = hashtag
         self.size = size
 
-        self.interval = 10
+        self.interval = interval
         self.leader_proc = RepeatingTimer(self.interval, self.leader_print)
 
     def start(self):
@@ -57,11 +59,14 @@ class LeaderBoard():
 
         return Session()  # Bridges class to db
 
-    def get_hashtags():
+    def get_hashtags(self, session):
         """
-        Returns a list of all current tracked hashtags\
-        TODO: Implement
+        Returns a list of all current active hashtags
+        Session can directly be used to database queries
         """
+        h_query = session.query(TrendyHashtag).filter(TrendyHashtag.active == True).order_by(desc(TrendyHashtag.created))
+        hashtags = h_query.all()
+        return [h.hashtag for h in hashtags]
 
     def get_leaders(self):
         """
@@ -77,26 +82,40 @@ class LeaderBoard():
 
         The result is of type :
         [[#hashtag1, [Leader1, Leader2, ...]],  [#hashtag2, [Leader1, Leader2, ...]]]
-        #FIXME : Ugly and done in the train. Get back to this soon .
+        #FIXME : Ugly and done in the plane. Get back to this soon .
         """
         session = self.connect()
         leaders = []
         if self.hashtag is None:
-            hashtags = self.get_hashtags()
-            #TODO: Fill this
+            hashtags = self.get_hashtags(session)
         else:
-            l_query = session.query(Member).filter(Member.hashtag == self.hashtag).order_by(desc(Member.count))
-            top_members = l_query.all()
-            if self.size > 0:
-                top_members = top_members[0:self.size]
-            leaders.append([self.hashtag, top_members])
+            hashtags = [self.hashtag]
+
+        for h in hashtags:
+            top_members = self.get_hashtag_leaders(session, h, self.size)
+            leaders.append([h, top_members])
+
+        return leaders
+
+    def get_hashtag_leaders(self, session, hashtag, size=10):
+        """
+        Returns the current leaders of the competition for the given hashtag
+        The result will be a list of twitter usernames, with the current number
+        of tweets containing the hashtag they sent.
+        The list is of max size size, but can be smaller of even empty if no
+        user has been detected yet.
+        """
+        l_query = session.query(Member).filter(Member.hashtag == hashtag).order_by(desc(Member.count))
+        leaders = l_query.all()
+        if size > 0:
+            leaders = leaders[0:size]
 
         return leaders
 
 
-class DumbLeaderBoard(LeaderBoard):
+class StdLeaderBoard(LeaderBoard):
 
-    def __init__(self, hashtag, size=10):
+    def __init__(self, hashtag=None, size=10, interval=1):
         LeaderBoard.__init__(self, hashtag, size)
 
     def leader_print(self):
@@ -107,34 +126,18 @@ class DumbLeaderBoard(LeaderBoard):
         leaders = self.get_leaders()
         self.print_leaders(leaders)
 
-    # def get_leaders(self):
-    #     """
-    #     Returns the current leaders of the competition for the given hashtag
-    #     The result will be a list of twitter usernames, with the current number
-    #     of tweets containing the hashtag they sent.
-    #     The list is of max size size, but can be smaller of even empty if no
-    #     user has been detected yet.
-    #     """
-    #     session = self.connect()
-    #     #l_query = session.query(Member).filter(Member.hashtag == self.hashtag).order_by(desc(Member.count))
-    #     print self.hashtag
-    #     l_query = session.query(Member).order_by(desc(Member.count))
-    #     leaders = l_query.all()
-    #     if self.size > 0:
-    #         leaders = leaders[0:self.size]
-
-    #     return leaders
-
     def print_leaders(self, leaders):
         """
         Dumps the list of leaders on the console
         leaders is of type :
         [[#hashtag1, [Leader1, Leader2, ...]],  [#hashtag2, [Leader1, Leader2, ...]]]
         """
+        print "----------------------------- %s ----------------------------------" % (datetime.datetime.now())
         for hashtag, members in leaders:
             print "######### %s #########" % (hashtag)
             for member in members:
                 print "%s - %d" % (member.author, member.count)
+
 
 # ---------
 def stop_handler(signal, frame):
@@ -149,7 +152,6 @@ if __name__ == '__main__':
     # registering the signal
     signal.signal(signal.SIGINT, stop_handler)
 
-    # Initiates LeaderBoard and starts it
-    l = DumbLeaderBoard("#nowplaying", 10)
+    l = StdLeaderBoard()
     print "Press CTRL + C to stop application"
     l.start()
