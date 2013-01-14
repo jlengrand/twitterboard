@@ -114,7 +114,6 @@ class LeaderBoard():
 
 
 class StdLeaderBoard(LeaderBoard):
-
     def __init__(self, hashtag=None, size=10, interval=1):
         LeaderBoard.__init__(self, hashtag, size)
 
@@ -137,6 +136,29 @@ class StdLeaderBoard(LeaderBoard):
             print "######### %s #########" % (hashtag)
             for member in members:
                 print "%s - %d" % (member.author, member.count)
+
+
+class HtmlLeaderboard(LeaderBoard):
+    def __init__(self, hashtag=None, size=10, interval=1):
+        LeaderBoard.__init__(self, hashtag, size)
+        self.file = "/home/jll/Dropbox/Public/Twiderboard/index.html"  # Where to save file
+
+    def leader_print(self):
+        """
+        Periodically retrieves the leaders for the given hashtag
+        and prints them out into an html file
+
+        TODO: Implement
+        """
+
+    def print_leaders(self, leaders):
+        """
+        Dumps the list of leaders on the console
+        leaders is of type :
+        [[#hashtag1, [Leader1, Leader2, ...]],  [#hashtag2, [Leader1, Leader2, ...]]]
+
+        TODO: Implement
+        """
 
 
 # ---------
