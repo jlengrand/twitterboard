@@ -23,6 +23,8 @@ from utils.timing import RepeatingTimer
 import signal
 import datetime
 
+import jinja2
+
 
 class LeaderBoard():
     def __init__(self, hashtag=None, size=10, interval=1):
@@ -141,25 +143,41 @@ class StdLeaderBoard(LeaderBoard):
 class HtmlLeaderboard(LeaderBoard):
     def __init__(self, hashtag=None, size=10, interval=1):
         LeaderBoard.__init__(self, hashtag, size)
-        self.file = "/home/jll/Dropbox/Public/Twiderboard/index.html"  # Where to save file
+        self.file = "/home/jll/Dropbox/Public/Twiderboard/leader.html"  # Where to save file
+        self.tmpl = "/home/jll/Dropbox/Public/Twiderboard/tmpl.html"  # Template file
 
     def leader_print(self):
         """
         Periodically retrieves the leaders for the given hashtag
         and prints them out into an html file
-
-        TODO: Implement
         """
+        leaders = self.get_leaders()
+        self.print_leaders(leaders)
 
     def print_leaders(self, leaders):
         """
         Dumps the list of leaders on the console
         leaders is of type :
         [[#hashtag1, [Leader1, Leader2, ...]],  [#hashtag2, [Leader1, Leader2, ...]]]
-
-        TODO: Implement
         """
+        file = open(self.file, "w")
+        loader = jinja2.FileSystemLoader('/home/jll/Dropbox/Public/Twiderboard/')
+        env = jinja2.Environment(loader=loader)
+        template = env.get_template('tmpl.html')
 
+        items = []
+        for hashtag, members in leaders:
+            i = 1
+            mem_list = []
+            for member in members:
+                mem_list.append([i, member.author.encode('utf-8'), member.count])
+                i += 1
+
+            items.append([hashtag.encode('utf-8'), mem_list])
+
+        #print template.render(items=items)
+        file.write(template.render(items=items))
+        file.close()
 
 # ---------
 def stop_handler(signal, frame):
@@ -174,6 +192,7 @@ if __name__ == '__main__':
     # registering the signal
     signal.signal(signal.SIGINT, stop_handler)
 
-    l = StdLeaderBoard()
+    #l = StdLeaderBoard()
+    l = HtmlLeaderboard()
     print "Press CTRL + C to stop application"
     l.start()
