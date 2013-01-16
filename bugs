@@ -1,1 +1,13 @@
 It is possible to create the same hashtag several times in the databse. => Add existence checks
+
+How is it possible to know which thread raised the error ? Output only says thread.py
+
+enhancement : Session is redefined again and again over the code.
+Create a class creating sessions to avoid code repetition.
+
+
+
+SOLVED:
+
+
+Running command.py generates a database problem. Apparently due to passing session/connection between threads.

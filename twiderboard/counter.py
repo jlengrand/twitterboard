@@ -10,7 +10,6 @@ Whatever is in this file should:
 - add a new point for this couple
 - note the processed elements as crawled
 """
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -20,11 +19,10 @@ from datamodel import Member
 
 from utils.timing import RepeatingTimer
 from data import debug
-from data import engine_url
 from data import log_path
 
 import logging
-import signal
+
 
 class Counter():
     def __init__(self, engine_url):

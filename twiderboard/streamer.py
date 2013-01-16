@@ -11,7 +11,6 @@ from tweepy import Stream
 
 from data import debug
 
-
 from datamodel import Base
 from datamodel import Tweet
 from datamodel import TrendyHashtag
@@ -148,23 +147,16 @@ class HashtagLogger():
         self.auth = Authentification(oauth=self.oauth)
         self.stream = None
 
-        # creates engine, initiates session, tries to create tables
-        engine = create_engine(engine_url, echo=debug)
-        Base.metadata.create_all(engine)
-
-        # Defines a sessionmaker that will be used to connect to the DB
-        Session = sessionmaker(bind=engine)
-        self.session = Session()  # bridge to the db
-
         self.trendy = self.load_hashtags()
-        #self.trendy = []
 
     def load_hashtags(self):
         """
         Creates list of current trendy hashtags by loading
         all active hashtags from database
         """
-        h_query = self.session.query(TrendyHashtag).filter(TrendyHashtag.active == True)
+        session = self.connect()
+
+        h_query = session.query(TrendyHashtag).filter(TrendyHashtag.active == True)
         hashtags = h_query.all()
 
         trendy = []
@@ -174,8 +166,10 @@ class HashtagLogger():
         return trendy
 
     def start(self):
+        session = self.connect()
+
         if len(self.trendy) > 0:
-            listener = StreamSaverListener(self.trendy, self.session)
+            listener = StreamSaverListener(self.trendy, session)
 
             self.stream = Stream(self.auth.get_auth(), listener)
             print self.trendy
@@ -187,6 +181,10 @@ class HashtagLogger():
         if self.stream is not None:
             self.stream.disconnect()
 
+    def restart(self):
+        self.stop()
+        self.start()
+
     def add_hashtag(self, hashtag):
         """
         FIXME: Check if starts with #
@@ -196,16 +194,18 @@ class HashtagLogger():
         The streaming connexion is reinitialized to take the new filter into
         account.
         """
+        session = self.connect()
+
         if hashtag not in self.trendy:
             # saves to db
             trendy_hashtag = TrendyHashtag(hashtag)
-            self.session.add(trendy_hashtag)
-            self.session.commit()  # sends to db
+            session.add(trendy_hashtag)
+            session.commit()  # sends to db
 
             self.trendy.append(hashtag)  # appends in list
+            session.commit()
 
-        self.stop()
-        self.start()
+        self.restart()
 
     def remove_hashtag(self, hashtag):
         """
@@ -214,9 +214,11 @@ class HashtagLogger():
         The streaming connexion is reinitialized to take the new filter into
         account.
         """
+        session = self.connect()
+
         if hashtag in self.trendy:
             # removes hashtag from active list
-            h_query = self.session.query(TrendyHashtag).filter(TrendyHashtag.hashtag == hashtag).filter(TrendyHashtag.active == True)
+            h_query = session.query(TrendyHashtag).filter(TrendyHashtag.hashtag == hashtag).filter(TrendyHashtag.active == True)
             hashtags = h_query.all()
 
             if 0 == len(hashtags) > 1:
@@ -227,11 +229,24 @@ class HashtagLogger():
                 trendy_hashtag.active = False
                 trendy_hashtag.updated = datetime.datetime.now()
 
-                self.session.add(trendy_hashtag)
-                self.session.commit()
+                session.add(trendy_hashtag)
+                session.commit()
 
                 # removes from list
                 self.trendy.remove(hashtag)
 
-        self.stop()
-        self.start()
+        self.restart()
+
+    def connect(self):
+        """
+        Separated so that the method can be run in each created thread.
+        Initiates connexion to the database and starts a Session to be used to query it.
+        Returns the session used to communicate with the database
+        """
+        # creates engine, tries to create all the tables needed later on
+        engine = create_engine(self.engine_url, echo=debug)
+        Base.metadata.create_all(engine)
+        # initiates session to the database, tries to create proper session
+        Session = sessionmaker(bind=engine)
+
+        return Session()  # Bridges class to db
