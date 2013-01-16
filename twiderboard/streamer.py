@@ -196,14 +196,34 @@ class HashtagLogger():
         """
         session = self.connect()
 
-        if hashtag not in self.trendy:
-            # saves to db
-            trendy_hashtag = TrendyHashtag(hashtag)
-            session.add(trendy_hashtag)
-            session.commit()  # sends to db
+        print self.trendy
+        print hashtag
 
-            self.trendy.append(hashtag)  # appends in list
-            session.commit()
+        h_query = session.query(TrendyHashtag)
+        all_hashs = h_query.all()
+        all_names = [h.hashtag for h in all_hashs]
+
+
+        #FIXME: Do that correctly ! This si soooooo ugly!
+        # check if hashtag to add is already present but inactive
+        if hashtag in all_names:
+            for h in all_hashs:
+                if h.hashtag == hashtag: # there but not active
+                    if h.active == False:
+                        h.active = True
+                        h.updated = datetime.datetime.now()
+                        trendy_hashtag = h
+                    else:
+                        #do nothing, already there and active !
+                        return
+        else: # new hashtag to be created
+            trendy_hashtag = TrendyHashtag(hashtag)
+
+        session.add(trendy_hashtag)
+        session.commit()  # sends to db
+
+        self.trendy.append(hashtag)  # appends in list
+        session.commit()
 
         self.restart()
 
@@ -224,7 +244,7 @@ class HashtagLogger():
             if 0 == len(hashtags) > 1:
                 print "Hashtag not recorded in database!"
             else:
-                # removes from database
+                # sets hashtag as inactive and updates date
                 trendy_hashtag = hashtags[0]
                 trendy_hashtag.active = False
                 trendy_hashtag.updated = datetime.datetime.now()
