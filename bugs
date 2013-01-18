@@ -3,6 +3,9 @@ How is it possible to know which thread raised the error ? Output only says thre
 enhancement : Session is redefined again and again over the code.
 Create a class creating sessions to avoid code repetition.
 
+sessions have to be closed!
+normally, 5 concurrent sessions can be created within a pool
+
 SOLVED:
 
 

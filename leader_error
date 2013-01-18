@@ -1,0 +1,41 @@
+witterboard]$ python twiderboard/leader.py
+Press CTRL + C to stop application
+Exception in thread Thread-975:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 552, in __bootstrap_inner
+    self.run()
+  File "/usr/lib/python2.7/threading.py", line 760, in run
+    self.function(*self.args, **self.kwargs)
+  File "/home/jll/Documents/code/twitterboard/twiderboard/utils/timing.py", line 33, in callback
+    self.function(*self.args, **self.kwargs)
+  File "twiderboard/leader.py", line 154, in leader_print
+    leaders = self.get_leaders()
+  File "twiderboard/leader.py", line 89, in get_leaders
+    session = self.connect()
+  File "twiderboard/leader.py", line 58, in connect
+    Base.metadata.create_all(engine)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/schema.py", line 2737, in create_all
+    tables=tables)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1487, in _run_visitor
+    conn._run_visitor(visitorcallable, element, **kwargs)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1130, in _run_visitor
+    **kwargs).traverse_single(element)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/sql/visitors.py", line 111, in traverse_single
+    return meth(obj, **kw)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/ddl.py", line 57, in visit_metadata
+    if self._can_create_table(t)]
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/ddl.py", line 35, in _can_create_table
+    table.name, schema=table.schema)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/base.py", line 724, in has_table
+    cursor = _pragma_cursor(connection.execute(statement))
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 664, in execute
+    params)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 808, in _execute_text
+    statement, parameters
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 878, in _execute_context
+    context)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 871, in _execute_context
+    context)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py", line 320, in do_execute
+    cursor.execute(statement, parameters)
+OperationalError: (OperationalError) database is locked 'PRAGMA table_info("member")' ()
