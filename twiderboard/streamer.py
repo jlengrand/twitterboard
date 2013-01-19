@@ -163,6 +163,8 @@ class HashtagLogger():
         for hashtag in hashtags:
             trendy.append(hashtag.hashtag)
 
+        session.close()
+
         return trendy
 
     def start(self):
@@ -179,6 +181,7 @@ class HashtagLogger():
 
     def stop(self):
         if self.stream is not None:
+            self.stream.listener.session.close()  # FIXME: this is awful as hell
             self.stream.disconnect()
 
     def restart(self):
@@ -203,12 +206,11 @@ class HashtagLogger():
         all_hashs = h_query.all()
         all_names = [h.hashtag for h in all_hashs]
 
-
         #FIXME: Do that correctly ! This si soooooo ugly!
         # check if hashtag to add is already present but inactive
         if hashtag in all_names:
             for h in all_hashs:
-                if h.hashtag == hashtag: # there but not active
+                if h.hashtag == hashtag:  # there but not active
                     if h.active == False:
                         h.active = True
                         h.updated = datetime.datetime.now()
@@ -216,14 +218,15 @@ class HashtagLogger():
                     else:
                         #do nothing, already there and active !
                         return
-        else: # new hashtag to be created
+        else:  # new hashtag to be created
             trendy_hashtag = TrendyHashtag(hashtag)
 
         session.add(trendy_hashtag)
         session.commit()  # sends to db
 
         self.trendy.append(hashtag)  # appends in list
-        session.commit()
+
+        session.close()
 
         self.restart()
 
@@ -254,6 +257,8 @@ class HashtagLogger():
 
                 # removes from list
                 self.trendy.remove(hashtag)
+
+        session.close()
 
         self.restart()
 

@@ -9,7 +9,6 @@ import sys
 
 from data import engine_url
 
-from leader import LeaderBoard
 from counter import Counter
 from streamer import HashtagLogger
 
