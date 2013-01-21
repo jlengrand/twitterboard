@@ -1,0 +1,57 @@
+21:38 ~/twitterboard (master)$ python twiderboard/leader.py 
+Press CTRL + C to stop application
+Traceback (most recent call last):
+  File "twiderboard/leader.py", line 200, in <module>
+    l.start()
+  File "twiderboard/leader.py", line 42, in start
+    self.leader_proc.start()
+  File "/home/jllengrand/twitterboard/twiderboard/utils/timing.py", line 26, in start
+    self.callback()
+  File "/home/jllengrand/twitterboard/twiderboard/utils/timing.py", line 33, in callback
+    self.function(*self.args, **self.kwargs)
+  File "twiderboard/leader.py", line 155, in leader_print
+    self.print_leaders(leaders)
+  File "twiderboard/leader.py", line 163, in print_leaders
+    file = open(self.file, "w")
+IOError: [Errno 2] No such file or directory: '/home/jll/Dropbox/Public/Twiderboard/leader.html'
+21:38 ~/twitterboard (master)$ python twiderboard/leader.py 
+Press CTRL + C to stop application
+Exception in thread Thread-3501:
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/threading.py", line 551, in __bootstrap_inner
+    self.run()
+  File "/usr/local/lib/python2.7/threading.py", line 755, in run
+    self.function(*self.args, **self.kwargs)
+  File "/home/jllengrand/twitterboard/twiderboard/utils/timing.py", line 33, in callback
+    self.function(*self.args, **self.kwargs)
+  File "twiderboard/leader.py", line 154, in leader_print
+    leaders = self.get_leaders()
+  File "twiderboard/leader.py", line 89, in get_leaders
+    session = self.connect()
+  File "twiderboard/leader.py", line 58, in connect
+    Base.metadata.create_all(engine)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/schema.py", line 2571, in create_all
+    tables=tables)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 2302, in _run_visitor
+    conn._run_visitor(visitorcallable, element, **kwargs)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1972, in _run_visitor
+    **kwargs).traverse_single(element)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/sql/visitors.py", line 106, in traverse_single
+    return meth(obj, **kw)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/ddl.py", line 54, in visit_metadata
+    if self._can_create_table(t)]
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/ddl.py", line 32, in _can_create_table
+    table.name, schema=table.schema)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/dialects/sqlite/base.py", line 645, in has_table
+    cursor = _pragma_cursor(connection.execute("%stable_info(%s)" % (pragma, qtable)))
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1449, in execute
+    params)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1628, in _execute_text
+    statement, parameters
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1698, in _execute_context
+    context)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 1691, in _execute_context
+    context)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py", line 331, in do_execute
+    cursor.execute(statement, parameters)
+OperationalError: (OperationalError) database is locked 'PRAGMA table_info("tweets")' ()
