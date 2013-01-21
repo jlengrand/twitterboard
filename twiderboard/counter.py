@@ -28,7 +28,7 @@ class Counter():
     def __init__(self, engine_url):
         self.url = engine_url
 
-        self.cpt = 0  # Used to force data flushing to db
+        #self.cpt = 0  # Used to force data flushing to db
         self.interval = 1  # repeats every second by default
 
         # sets up logger
@@ -141,7 +141,7 @@ class Counter():
         tweet.crawled = True
         session.add(tweet)
 
-        self.cpt += 1  # indicates that we have a candidiate for the flushing
+        #self.cpt += 1  # indicates that we have a candidiate for the flushing
 
     def update(self, session, member, tweet):
         """
@@ -156,7 +156,7 @@ class Counter():
             tweet.crawled = True
             session.add(tweet)
 
-            self.cpt += 1
+            #self.cpt += 1
         else:
             self.logger.error("ElementException :  Cannot update Member, Member is not valid !")
             raise ElementException  # FIXME : Take care
@@ -175,7 +175,7 @@ class Counter():
             tweet.crawled = True
             session.add(tweet)
 
-            self.cpt = 1
+            #self.cpt = 1
         else:
             self.logger.error("ElementException :  Cannot create Member, Tweet is not valid !")
             raise ElementException  # FIXME : Take care
@@ -215,10 +215,11 @@ class Counter():
         FIXME: By not flushing every time, we might have doublons
         if the same guy tweets several times with the same flag
         """
-        limit = 1
-        if self.cpt >= limit:
-            session.commit()  # force saving changes
-            self.cpt = 0
+        pass
+        #limit = 1
+        #if self.cpt >= limit:
+        #    session.commit()  # force saving changes
+        #    self.cpt = 0
 
 
 class ElementException(Exception):

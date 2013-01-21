@@ -30,7 +30,7 @@ class StreamSaverListener(StreamListener):
     """
     def __init__(self, hashtags, session):
         StreamListener.__init__(self)
-        self.cpt = 0   # FIXME: test if useful
+        # self.cpt = 0   # FIXME: test if useful
         self.eu = EncodingUtils()
 
         self.hashtags = self.format_hashtags(hashtags)
@@ -48,17 +48,14 @@ class StreamSaverListener(StreamListener):
 
         tweet.get_main_tag(self.hashtags)
 
-        #print tweet.hashtag.encode('utf-8')
-        #sys.exit(0)
-
         self.session.add(tweet)
-        self.cpt += 1
+        # self.cpt += 1
 
         # trying to flush if needed
-        if self.cpt >= 10:
-            self.session.commit()  # force saving changes
-            #print (".")
-            self.cpt = 0
+        # if self.cpt >= 10:
+        #     self.session.commit()  # force saving changes
+        #     #print (".")
+        #     self.cpt = 0
 
     def on_error(self, status_code):
         print 'An error has occured! Status code = %s' % status_code
