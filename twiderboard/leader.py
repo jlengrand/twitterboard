@@ -97,6 +97,8 @@ class LeaderBoard():
             top_members = self.get_hashtag_leaders(session, h, self.size)
             leaders.append([h, top_members])
 
+        session.close()
+
         return leaders
 
     def get_hashtag_leaders(self, session, hashtag, size=10):

@@ -1,3 +1,9 @@
+TODO:
+
+Set all folders/parameters in prroperties files and do not have to modify code.
+
+
+
 How is it possible to know which thread raised the error ? Output only says thread.py
 
 enhancement : Session is redefined again and again over the code.
