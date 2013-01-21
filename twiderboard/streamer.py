@@ -272,6 +272,6 @@ class HashtagLogger():
         engine = create_engine(self.engine_url, echo=debug)
         Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
-        Session = sessionmaker(bind=engine)
+        Session = sessionmaker(bind=engine, autocommit=True, autoflush=False)
 
         return Session()  # Bridges class to db

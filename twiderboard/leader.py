@@ -57,7 +57,7 @@ class LeaderBoard():
         engine = create_engine(self.url, echo=debug)
         Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
-        Session = sessionmaker(bind=engine)
+        Session = sessionmaker(bind=engine, autocommit=True, autoflsuh=False)
 
         return Session()  # Bridges class to db
 
