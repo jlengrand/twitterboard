@@ -30,7 +30,7 @@ class StreamSaverListener(StreamListener):
     """
     def __init__(self, hashtags, session):
         StreamListener.__init__(self)
-        # self.cpt = 0   # FIXME: test if useful
+        self.cpt = 0   # FIXME: test if useful
         self.eu = EncodingUtils()
 
         self.hashtags = self.format_hashtags(hashtags)
@@ -49,13 +49,13 @@ class StreamSaverListener(StreamListener):
         tweet.get_main_tag(self.hashtags)
 
         self.session.add(tweet)
-        # self.cpt += 1
+        self.cpt += 1
 
-        # trying to flush if needed
-        # if self.cpt >= 10:
-        #     self.session.commit()  # force saving changes
-        #     #print (".")
-        #     self.cpt = 0
+        #trying to flush if needed
+        if self.cpt >= 10:
+            self.session.commit()  # force saving changes
+            #print (".")
+            self.cpt = 0
 
     def on_error(self, status_code):
         print 'An error has occured! Status code = %s' % status_code
@@ -219,7 +219,7 @@ class HashtagLogger():
             trendy_hashtag = TrendyHashtag(hashtag)
 
         session.add(trendy_hashtag)
-        #session.commit()  # sends to db
+        session.commit()  # sends to db
 
         self.trendy.append(hashtag)  # appends in list
 
@@ -269,6 +269,6 @@ class HashtagLogger():
         engine = create_engine(self.engine_url, echo=debug)
         Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
-        Session = sessionmaker(bind=engine, autocommit=True, autoflush=False)
+        Session = sessionmaker(bind=engine)
 
         return Session()  # Bridges class to db
