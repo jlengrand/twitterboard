@@ -4,3 +4,4 @@ basic.keys
 lib_tests/tweepy
 *.pyc
 test.py
+*.db

@@ -3,12 +3,14 @@
 
 from ConfigParser import SafeConfigParser
 import os
-
+import sys
 # FIXME: find how to read it from anywhere.
 #(without having to be in correct folder)
 
 parser = SafeConfigParser()
-parser.read('basic.ini')
+# ini file should be located one folder up from data module (in main repo)
+ini_path = os.path.join(os.path.dirname(os.path.dirname( __file__ )), 'basic.ini')
+parser.read(ini_path)
 
 # Base :
 engine_url = parser.get('base', 'engine')
