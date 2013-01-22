@@ -126,8 +126,11 @@ class StdLeaderBoard(LeaderBoard):
         Periodically retrieves the leaders for the given hashtag
         and prints them out
         """
-        leaders = self.get_leaders()
-        self.print_leaders(leaders)
+        try:
+            leaders = self.get_leaders()
+            self.print_leaders(leaders)
+        except Exception:   # database locked or problem
+            pass  # Let's pass this one
 
     def print_leaders(self, leaders):
         """
