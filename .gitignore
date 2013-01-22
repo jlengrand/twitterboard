@@ -5,3 +5,4 @@ lib_tests/tweepy
 *.pyc
 test.py
 *.db
+*.ini

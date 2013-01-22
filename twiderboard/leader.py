@@ -197,7 +197,7 @@ if __name__ == '__main__':
     # registering the signal
     signal.signal(signal.SIGINT, stop_handler)
 
-    l = StdLeaderBoard()
-    #l = HtmlLeaderboard()
+    #l = StdLeaderBoard()
+    l = HtmlLeaderboard()
     print "Press CTRL + C to stop application"
     l.start()
