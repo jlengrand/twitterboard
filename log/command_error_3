@@ -1,0 +1,38 @@
+>Exception in thread Thread-1597:
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/threading.py", line 551, in __bootstrap_inner
+    self.run()
+  File "/usr/local/lib/python2.7/threading.py", line 755, in run
+    self.function(*self.args, **self.kwargs)
+  File "/home/jlengrand/twitterboard/twiderboard/utils/timing.py", line 33, in callback
+    self.function(*self.args, **self.kwargs)
+  File "/home/jlengrand/twitterboard/twiderboard/counter.py", line 114, in count
+    t_hash = tweet.hashtag
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/attributes.py", line 168, in __get__
+    return self.impl.get(instance_state(instance),dict_)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/attributes.py", line 451, in get
+    value = callable_(passive)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/state.py", line 285, in __call__
+    self.manager.deferred_scalar_loader(self, toload)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/mapper.py", line 1714, in _load_scalar_attributes
+    only_load_props=attribute_names)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2512, in _load_on_ident
+    return q.one()
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2184, in one
+    ret = list(self)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2227, in __iter__
+    return self._execute_and_instances(context)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2240, in _execute_and_instances
+    close_with_result=True)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2231, in _connection_from_session
+    **kw)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 777, in connection
+    close_with_result=close_with_result)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 781, in _connection_for_bind
+    return self.transaction._connection_for_bind(engine)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 289, in _connection_for_bind
+    self._assert_is_active()
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/session.py", line 213, in _assert_is_active
+    % self._rollback_exception
+InvalidRequestError: This Session's transaction has been rolled back due to a previous exception during flush. To begin a new transaction with this Session, first issue Session.rollback(). Original exception was: (OperationalError) dat
+abase is locked u'UPDATE member SET updated=?, count=? WHERE member.id = ?' ('2013-01-22 14:11:47.053069', 2, 1297)
