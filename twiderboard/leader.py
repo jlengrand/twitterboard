@@ -21,7 +21,6 @@ from utils.timing import RepeatingTimer
 
 import signal
 import datetime
-
 import jinja2
 
 
@@ -147,8 +146,9 @@ class StdLeaderBoard(LeaderBoard):
 class HtmlLeaderboard(LeaderBoard):
     def __init__(self, hashtag=None, size=10, interval=1):
         LeaderBoard.__init__(self, hashtag, size)
-        self.file = "/home/jll/Dropbox/Public/Twiderboard/leader.html"  # Where to save file
-        self.tmpl = "/home/jll/Dropbox/Public/Twiderboard/tmpl.html"  # Template file
+        self.html_file = data.html_file
+        self.root = data.html_root
+        self.tmpl = data.tmpl
 
     def leader_print(self):
         """
@@ -164,10 +164,10 @@ class HtmlLeaderboard(LeaderBoard):
         leaders is of type :
         [[#hashtag1, [Leader1, Leader2, ...]],  [#hashtag2, [Leader1, Leader2, ...]]]
         """
-        file = open(self.file, "w")
-        loader = jinja2.FileSystemLoader('/home/jll/Dropbox/Public/Twiderboard/')
+        file = open(self.html_file, "w")
+        loader = jinja2.FileSystemLoader(self.root)
         env = jinja2.Environment(loader=loader)
-        template = env.get_template('tmpl.html')
+        template = env.get_template(self.tmpl)
 
         items = []
         for hashtag, members in leaders:
@@ -182,6 +182,7 @@ class HtmlLeaderboard(LeaderBoard):
         #print template.render(items=items)
         file.write(template.render(items=items))
         file.close()
+
 
 # ---------
 def stop_handler(signal, frame):

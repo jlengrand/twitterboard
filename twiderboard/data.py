@@ -19,12 +19,18 @@ debug = parser.get('log', 'debug')
 log_name = parser.get('log', 'name')
 log_path = os.path.join(root, log_name)
 
-
 # Keys
-oauth=parser.get('keys', 'oauth_id')
+oauth = parser.get('keys', 'oauth_id')
 keys_root = parser.get('keys', 'root')
 oauth_name = parser.get('keys', 'oauth')
 basic_name = parser.get('keys', 'basic')
 
 oauth_keys = os.path.join(keys_root, oauth_name)
 basic_keys = os.path.join(keys_root, basic_name)
+
+# HTML
+html_root = parser.get('html', 'root')
+html = parser.get('html', 'html')
+tmpl = parser.get('html', 'tmpl')
+html_file = os.path.join(html_root, html)
+tmpl_file = os.path.join(html_root, tmpl)
