@@ -15,8 +15,7 @@ from datamodel import Base
 from datamodel import Member
 from datamodel import TrendyHashtag
 
-from data import debug
-from data import engine_url
+import data
 
 from utils.timing import RepeatingTimer
 
@@ -28,7 +27,7 @@ import jinja2
 
 class LeaderBoard():
     def __init__(self, hashtag=None, size=10, interval=1):
-        self.url = engine_url
+        self.url = data.engine_url
         self.hashtag = hashtag
         self.size = size
 
@@ -54,7 +53,7 @@ class LeaderBoard():
         Returns the session used to communicate with the database
         """
         # creates engine, tries to create all the tables needed later on
-        engine = create_engine(self.url, echo=debug)
+        engine = create_engine(self.url, echo=data.debug)
         Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)
