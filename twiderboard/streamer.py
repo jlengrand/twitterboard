@@ -9,8 +9,6 @@ from tweepy.auth import AuthHandler
 
 from tweepy import Stream
 
-from data import debug
-
 from datamodel import Base
 from datamodel import Tweet
 from datamodel import TrendyHashtag
@@ -20,7 +18,7 @@ from sqlalchemy.orm import sessionmaker
 
 from encodingUtils import EncodingUtils
 
-from data import root
+import data
 from time import sleep
 
 
@@ -92,10 +90,10 @@ class Authentification(AuthHandler):
         self.auth = None
 
         if oauth:
-            file_name = root + "oauth.keys"
+            file_name = data.oauth_keys
             self.oauth_authenticate(file_name)
         else:
-            file_name = root + "basic.keys"
+            file_name = data.basic_keys
             self.basic_authenticate(file_name)
 
     def basic_authenticate(self, file_name):
@@ -284,7 +282,7 @@ class HashtagLogger():
         Returns the session used to communicate with the database
         """
         # creates engine, tries to create all the tables needed later on
-        engine = create_engine(self.engine_url, echo=debug)
+        engine = create_engine(self.engine_url, echo=data.debug)
         Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)

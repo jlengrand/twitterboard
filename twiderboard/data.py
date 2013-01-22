@@ -1,23 +1,29 @@
-"""
-Contains all needed information for application to work
-and that has to be spread over modules.
-"""
-# Go to http://dev.twitter.com and create an app.
-# The consumer key and secret will be generated for you after
+#  ConfigParser loads the configuration file containing
+# all inforamation that will be used by other modules
 
-# After the step above, you will be redirected to your app's page.
-# Create an access token under the the "Your access token" section
-
+from ConfigParser import SafeConfigParser
 import os
 
-debug = False  # True
-root = '/home/jll/Documents/code/twitterboard/'
-#root = '/home/test/Documents/twiderboard'
-#root = '/home/airballman/Documents/twiderboard/twitterboard/'
-# TODO: do that correctly
+# FIXME: find how to read it from anywhere.
+#(without having to be in correct folder)
 
-engine_url = 'sqlite:///twiderboard.db'
+parser = SafeConfigParser()
+parser.read('basic.ini')
 
+# Base :
+engine_url = parser.get('base', 'engine')
+root = parser.get('base', 'root')
 
-log_name = 'board.log'
+# Log
+debug = parser.get('log', 'debug')
+log_name = parser.get('log', 'name')
 log_path = os.path.join(root, log_name)
+
+
+# Keys
+keys_root = parser.get('keys', 'root')
+oauth_name = parser.get('keys', 'oauth')
+basic_name = parser.get('keys', 'basic')
+
+oauth_keys = os.path.join(keys_root, oauth_name)
+basic_keys = os.path.join(keys_root, basic_name)
