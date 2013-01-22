@@ -7,7 +7,7 @@ into commands that will trigger actions on the twiderboard
 import signal
 import sys
 
-from data import engine_url
+import data
 
 from counter import Counter
 from streamer import HashtagLogger
@@ -21,12 +21,12 @@ class Trigger():
         # starting all services
         # Streamer
         print "Starting streamer"
-        self.h = HashtagLogger(engine_url, oauth=True)
+        self.h = HashtagLogger(data.engine_url, oauth=data.oauth)
         self.h.start()
 
         #Counter
         print "Starting counter"
-        self.c = Counter(engine_url)
+        self.c = Counter(data.engine_url)
         self.c.start()
 
         # FIXME: Must create a wrapper to display them all periodically here

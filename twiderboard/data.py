@@ -21,6 +21,7 @@ log_path = os.path.join(root, log_name)
 
 
 # Keys
+oauth=parser.get('keys', 'oauth_id')
 keys_root = parser.get('keys', 'root')
 oauth_name = parser.get('keys', 'oauth')
 basic_name = parser.get('keys', 'basic')
