@@ -219,7 +219,7 @@ class HashtagLogger():
             trendy_hashtag = TrendyHashtag(hashtag)
 
         session.add(trendy_hashtag)
-        session.commit()  # sends to db
+        #session.commit()  # sends to db
 
         self.trendy.append(hashtag)  # appends in list
 
