@@ -130,7 +130,7 @@ class Counter():
                 self.invalidate(session, tweet)
                 self.logger.error("ElementException :  Could not process %s !" % (tweet))
 
-            self.flush(session)
+            self.commit_counts(session)
 
     def invalidate(self, session, tweet):
         """
@@ -208,18 +208,21 @@ class Counter():
 
         self.logger.info("Members: %d" % (len(query)))
 
-    def flush(self, session):
+    def commit_counts(self, session):
         """
-        Flushes data to db if enough data has to be updated
+        Commits data to db if enough data has to be updated
 
-        FIXME: By not flushing every time, we might have doublons
+        FIXME: By not commiting every time, we might have duplicates
         if the same guy tweets several times with the same flag
         """
         #pass
         limit = 1
         if self.cpt >= limit:
-           session.commit()  # force saving changes
-           self.cpt = 0
+            try:
+                session.commit()  # force saving changes
+                self.cpt = 0
+            except Exception:  # database already locked
+                pass  # wait till next time
 
 
 class ElementException(Exception):
