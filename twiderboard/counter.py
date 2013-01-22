@@ -18,8 +18,8 @@ from datamodel import Tweet
 from datamodel import Member
 
 from utils.timing import RepeatingTimer
-from data import debug
-from data import log_path
+
+import data
 
 import logging
 
@@ -45,7 +45,7 @@ class Counter():
         my_logger = logging.getLogger("Counter")
 
         my_logger.setLevel(logging.ERROR)
-        fh = logging.FileHandler(log_path)  # file part of logger
+        fh = logging.FileHandler(data.log_path)  # file part of logger
         fh.setLevel(logging.ERROR)
 
         #ch = logging.StreamHandler()  # console part of the logger
@@ -64,7 +64,7 @@ class Counter():
         Returns the session used to communicate with the database
         """
         # creates engine, tries to create all the tables needed later on
-        engine = create_engine(self.url, echo=debug)
+        engine = create_engine(self.url, echo=data.debug)
         Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)
