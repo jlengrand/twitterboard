@@ -21,6 +21,7 @@ from sqlalchemy.orm import sessionmaker
 from encodingUtils import EncodingUtils
 
 from data import root
+from time import sleep
 
 
 class StreamSaverListener(StreamListener):
@@ -53,9 +54,12 @@ class StreamSaverListener(StreamListener):
 
         #trying to flush if needed
         if self.cpt >= 10:
-            self.session.commit()  # force saving changes
-            #print (".")
-            self.cpt = 0
+            try:
+                self.session.commit()  # force saving changes
+                #print (".")
+                self.cpt = 0
+            except Exception:  # database is locked
+                pass  # redo next time
 
     def on_error(self, status_code):
         print 'An error has occured! Status code = %s' % status_code
@@ -219,13 +223,27 @@ class HashtagLogger():
             trendy_hashtag = TrendyHashtag(hashtag)
 
         session.add(trendy_hashtag)
-        session.commit()  # sends to db
+
+        self.commit_hashtag(session)
 
         self.trendy.append(hashtag)  # appends in list
 
         session.close()
 
         self.restart()
+
+    def commit_hashtag(self, session):
+        """
+        Takes care of errors that can happen if database if locked when session is commited
+        """
+        commit = False
+
+        while commit != True:
+            try:
+                session.commit()  # sends to db
+                commit = True
+            except Exception:  # database is locked
+                sleep(1)  # wait a bit
 
     def remove_hashtag(self, hashtag):
         """
@@ -250,7 +268,7 @@ class HashtagLogger():
                 trendy_hashtag.updated = datetime.datetime.now()
 
                 session.add(trendy_hashtag)
-                session.commit()
+                self.commit_hashtag(session)
 
                 # removes from list
                 self.trendy.remove(hashtag)
