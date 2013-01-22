@@ -15,7 +15,11 @@ engine_url = parser.get('base', 'engine')
 root = parser.get('base', 'root')
 
 # Log
-debug = parser.get('log', 'debug')
+deb = parser.get('log', 'debug')
+if deb != 'True':
+    debug = False
+else:
+    debug = True
 log_name = parser.get('log', 'name')
 log_path = os.path.join(root, log_name)
 
