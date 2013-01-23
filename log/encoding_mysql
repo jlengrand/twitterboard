@@ -1,0 +1,29 @@
+ql+mysqldb://root:test@localhost:3306/test?charset=utf8&use_unicode=1
+Starting streamer
+[u'#nowplaying', u'#wtf']
+Starting counter
+Command Line utility started:
+Press CTRL + C to stop application
+type h, help or ? to get a list of possible commands
+>/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xE3\x80\x90L'A...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xE2\x9D\xA4  #...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xE3\x80\x8C\xE3\x83\x8D...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xF0\x9F\x8E\xA7\xF0\x9F...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xEF\xBC\x81 - ...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xE2\x99\xAAHap...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xE8\x96\x84\xE8\x8D\xB7...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xE3\x80\x8C"Yo...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py:320: Warning: Incorrect string value: '\xE3\x80\x8CWAV...' for column 'text' at row 1
+  cursor.execute(statement, parameters)
+^C
+Stopping Streamer
+Stopping Counter
+Stopping Command Line
