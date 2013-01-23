@@ -17,7 +17,6 @@ engine_encoding = parser.get('base', 'encoding')
 engine_url = engine_base
 if len(engine_encoding) > 0:
     engine_url = engine_url + '?' + engine_encoding
-print engine_url
 
 root = parser.get('base', 'root')
 
