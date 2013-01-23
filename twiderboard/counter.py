@@ -95,6 +95,8 @@ class Counter():
         for tweet in query:
             self.logger.info(tweet.hashtag + " " + tweet.author)
 
+        session.close()
+
     def count(self):
         """
         Every time is it called, perform a check of the database, searches
@@ -102,7 +104,7 @@ class Counter():
         They are then added to the members database.
         """
         #print('.')
-        self.logger.info("((((((((((((((((((((((() COUNTING )))))))))))))))))))))))))))")
+        self.logger.info("((((((((((((((((((((((( COUNTING )))))))))))))))))))))))))))")
         session = self.connect()
 
         t_query = session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
@@ -131,6 +133,8 @@ class Counter():
                 self.logger.error("ElementException :  Could not process %s !" % (tweet))
 
             self.commit_counts(session)
+
+        session.close()
 
     def invalidate(self, session, tweet):
         """
