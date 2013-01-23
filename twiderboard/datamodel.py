@@ -10,8 +10,8 @@ from sqlalchemy import DateTime
 
 from encodingUtils import EncodingUtils
 
-engine_url = "sqlite:///twiderboard.db"
 Base = declarative_base()
+
 
 class TrendyHashtag(Base):
     """
@@ -21,7 +21,7 @@ class TrendyHashtag(Base):
     """
     __tablename__ = "trendy_hashtags"
     id = Column(Integer, primary_key=True)
-    hashtag = Column(String)  # should begin with # is it is really a hashtag
+    hashtag = Column(String(200))  # should begin with # is it is really a hashtag
     created = Column(DateTime)
     updated = Column(DateTime)  # used to track when is was last stopped/started
     active = Column(Boolean)  # Whether the hashtag is currently tracked or not.
@@ -33,6 +33,7 @@ class TrendyHashtag(Base):
         self.created = datetime.datetime.now()
         self.updated = datetime.datetime.now()
 
+
 class Member(Base):
     """
     Represents an entry in a leaderboard.
@@ -43,8 +44,8 @@ class Member(Base):
     """
     __tablename__ = "member"
     id = Column(Integer, primary_key=True)
-    author = Column(String)  # name of the guy that tweeted
-    hashtag = Column(String)  # name of the hashtag of the tweet
+    author = Column(String(200))  # name of the guy that tweeted
+    hashtag = Column(String(200))  # name of the hashtag of the tweet
     created = Column(DateTime)  # date of creation of the member
     updated = Column(DateTime)  # date of last count update
     count = Column(Integer)  # Number of tweets for this couple author/hashtag
@@ -89,13 +90,13 @@ class Tweet(Base):
     """
     __tablename__ = "tweets"
     id = Column(Integer, primary_key=True)
-    hashtag = Column(String)  # Hashtag that is tracked
-    text = Column(String)  # Content of the tweet
-    author = Column(String)  # name of the tweeter
-    created = Column(String)  # FIXME: Change to date. Date at which message was tweeted
+    hashtag = Column(String(200))  # Hashtag that is tracked
+    text = Column(String(200))  # Content of the tweet
+    author = Column(String(200))  # name of the tweeter
+    created = Column(String(200))  # FIXME: Change to date. Date at which message was tweeted
     inserted = Column(DateTime)  # Date at which tweet was saved in db
     crawled = Column(Boolean)  # Boolean whether or not tweet is in statistics already
-    source = Column(String)  # Where tweet comes from
+    source = Column(String(200))  # Where tweet comes from
 
     # Boolean that is set to True if Tweet cannot be processed correctly
     invalid = Column(Boolean)
