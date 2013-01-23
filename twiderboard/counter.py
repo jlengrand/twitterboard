@@ -218,11 +218,8 @@ class Counter():
         #pass
         limit = 1
         if self.cpt >= limit:
-            try:
-                session.commit()  # force saving changes
-                self.cpt = 0
-            except Exception:  # database already locked
-                pass  # wait till next time
+            session.commit()  # force saving changes
+            self.cpt = 0
 
 
 class ElementException(Exception):
@@ -231,7 +228,6 @@ class ElementException(Exception):
     """
     def __init__(self):
         Exception.__init__(self)
-        # FIXME: Better printing at least
 
 
 # ---------

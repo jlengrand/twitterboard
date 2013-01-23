@@ -109,7 +109,7 @@ class Tweet(Base):
         self.crawled = False
         self.inserted = inserted
         self.source = self.eu.to_unicode(source)
-        self.hashtag = ''
+        self.hashtag = self.eu.to_unicode('')
         self.text = self.eu.to_unicode(text)
 
         self.hashtags = self.extract_hashtags()
