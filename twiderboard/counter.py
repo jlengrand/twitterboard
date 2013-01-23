@@ -65,11 +65,11 @@ class Counter():
         """
         # creates engine, tries to create all the tables needed later on
         engine = create_engine(self.url, echo=data.debug)
-        Base.metadata.create_all(engine)
+        #Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)
 
-        return Session()  # Bridges class to db
+        return Session(), engine  # Bridges class to db
 
     def start(self):
         """
@@ -105,7 +105,7 @@ class Counter():
         """
         #print('.')
         self.logger.info("((((((((((((((((((((((( COUNTING )))))))))))))))))))))))))))")
-        session = self.connect()
+        session, engine = self.connect()
 
         t_query = session.query(Tweet).filter(Tweet.crawled == False).order_by(Tweet.id)
         tweets = t_query.all()
@@ -135,6 +135,7 @@ class Counter():
             self.commit_counts(session)
 
         session.close()
+        engine.dispose()
 
     def invalidate(self, session, tweet):
         """
@@ -201,6 +202,8 @@ class Counter():
             if ptr < num:
                 self.logger.info(q)
 
+        session.close()
+
     def member_count(self):
         """
         debug
@@ -211,6 +214,8 @@ class Counter():
         query = session.query(Member).order_by(Member.id).all()
 
         self.logger.info("Members: %d" % (len(query)))
+
+        session.close()
 
     def commit_counts(self, session):
         """

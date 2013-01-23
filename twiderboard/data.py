@@ -30,7 +30,11 @@ log_name = parser.get('log', 'name')
 log_path = os.path.join(root, log_name)
 
 # Keys
-oauth = parser.get('keys', 'oauth_id')
+oa = parser.get('keys', 'oauth_id')
+if oa != 'True':
+    oauth = False
+else:
+    oauth = True
 keys_root = parser.get('keys', 'root')
 oauth_name = parser.get('keys', 'oauth')
 basic_name = parser.get('keys', 'basic')
