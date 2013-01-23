@@ -11,7 +11,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc
 
-from datamodel import Base
 from datamodel import Member
 from datamodel import TrendyHashtag
 
@@ -53,11 +52,10 @@ class LeaderBoard():
         """
         # creates engine, tries to create all the tables needed later on
         engine = create_engine(self.url, echo=data.debug)
-        Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)
 
-        return Session()  # Bridges class to db
+        return Session(), engine  # Bridges class to db
 
     def get_hashtags(self, session):
         """
@@ -84,7 +82,7 @@ class LeaderBoard():
         [[#hashtag1, [Leader1, Leader2, ...]],  [#hashtag2, [Leader1, Leader2, ...]]]
         #FIXME : Ugly and done in the plane. Get back to this soon .
         """
-        session = self.connect()
+        session, engine = self.connect()
         leaders = []
         if self.hashtag is None:
             hashtags = self.get_hashtags(session)
@@ -96,6 +94,7 @@ class LeaderBoard():
             leaders.append([h, top_members])
 
         session.close()
+        engine.dispose()
 
         return leaders
 

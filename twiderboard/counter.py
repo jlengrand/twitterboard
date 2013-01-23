@@ -13,7 +13,6 @@ Whatever is in this file should:
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from datamodel import Base
 from datamodel import Tweet
 from datamodel import Member
 
@@ -65,7 +64,6 @@ class Counter():
         """
         # creates engine, tries to create all the tables needed later on
         engine = create_engine(self.url, echo=data.debug)
-        #Base.metadata.create_all(engine)
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)
 
