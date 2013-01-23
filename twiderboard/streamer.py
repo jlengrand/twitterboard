@@ -26,13 +26,14 @@ class StreamSaverListener(StreamListener):
     Stream that will save each tweet it receives into a database
     to be reused later
     """
-    def __init__(self, hashtags, session):
+    def __init__(self, hashtags, session, engine):
         StreamListener.__init__(self)
         self.cpt = 0   # FIXME: test if useful
         self.eu = EncodingUtils()
 
         self.hashtags = self.format_hashtags(hashtags)
         self.session = session  # bridge to the db
+        self.engine = engine
 
     def on_status(self, status):
         """
@@ -147,7 +148,7 @@ class HashtagLogger():
         Creates list of current trendy hashtags by loading
         all active hashtags from database
         """
-        session = self.connect()
+        session, engine = self.connect()
 
         h_query = session.query(TrendyHashtag).filter(TrendyHashtag.active == True)
         hashtags = h_query.all()
@@ -157,14 +158,15 @@ class HashtagLogger():
             trendy.append(hashtag.hashtag)
 
         session.close()
+        engine.dispose()
 
         return trendy
 
     def start(self):
-        session = self.connect()
+        session, engine = self.connect()
 
         if len(self.trendy) > 0:
-            listener = StreamSaverListener(self.trendy, session)
+            listener = StreamSaverListener(self.trendy, session, engine)
 
             self.stream = Stream(self.auth.get_auth(), listener)
             print self.trendy
@@ -175,6 +177,7 @@ class HashtagLogger():
     def stop(self):
         if self.stream is not None:
             self.stream.listener.session.close()  # FIXME: this is awful as hell
+            self.stream.listener.engine.dispose()  # FIXME: Create twitterstream inherited from stream. Override disconnect
             self.stream.disconnect()
 
     def restart(self):
@@ -190,7 +193,7 @@ class HashtagLogger():
         The streaming connexion is reinitialized to take the new filter into
         account.
         """
-        session = self.connect()
+        session, engine = self.connect()
 
         h_query = session.query(TrendyHashtag)
         all_hashs = h_query.all()
@@ -220,6 +223,7 @@ class HashtagLogger():
         session.close()
 
         self.restart()
+        engine.dispose()
 
     def commit_hashtag(self, session):
         """
@@ -234,7 +238,7 @@ class HashtagLogger():
         The streaming connexion is reinitialized to take the new filter into
         account.
         """
-        session = self.connect()
+        session, engine = self.connect()
 
         if hashtag in self.trendy:
             # removes hashtag from active list
@@ -258,6 +262,7 @@ class HashtagLogger():
         session.close()
 
         self.restart()
+        engine.dispose()
 
     def connect(self):
         """
@@ -271,4 +276,4 @@ class HashtagLogger():
         # initiates session to the database, tries to create proper session
         Session = sessionmaker(bind=engine)
 
-        return Session()  # Bridges class to db
+        return Session(), engine  # Bridges class to db
