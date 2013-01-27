@@ -11,7 +11,10 @@ from tweepy import Stream
 
 from datamodel import Base
 from datamodel import Tweet
+from datamodel import Member
 from datamodel import TrendyHashtag
+
+from counter import ElementException
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -45,12 +48,15 @@ class StreamSaverListener(StreamListener):
             status.source,
             status.text)
 
-        tweet.get_main_tag(self.hashtags)
+        tweet.get_main_tag(self.hashtags)  # FIXME: should be part of the init, shouldn t it ?
 
-        self.session.add(tweet)
+        #self.session.add(tweet)
+        # here i should update members now.
+        self.update_members(tweet)
+
         self.cpt += 1
 
-        if self.cpt >= 10:
+        if self.cpt >= 1:
             self.session.commit()  # force saving changes
             self.cpt = 0
 
@@ -69,6 +75,53 @@ class StreamSaverListener(StreamListener):
         Returns the same list of hashtags in unicode format
         """
         return [self.eu.to_unicode(has) for has in hashs]
+
+    def update_members(self, tweet):
+        """
+        Updates the member table using the last tweet received.
+        If Member already exists and has already used the hashtag, its counter will be incremented.
+        If member doesnt exist yet for the hashtag, it will be created.
+        """
+        auth = tweet.author
+        hasht = tweet.hashtag
+        m_query = self.session.query(Member).filter(Member.author == auth).filter(Member.hashtag == hasht)
+
+        reslen = len(m_query.all())
+        if reslen >= 1:
+            print "Error: Duplicate members found."
+        elif reslen == 0:
+            print "No member found, creating"
+            self.create_member(tweet)
+        else:  # reslen = 1
+            print "Member found, updating"
+            self.update_member(m_query.first())
+
+    def create_member(self, tweet):
+        """
+        Creates a new Member using data from the given Tweet
+        Called when no Member is found for the current
+        author/hashtag couple.
+        """
+        if (tweet.has_author() and tweet.has_hashtag()):
+            member = Member(tweet.author, tweet.hashtag, 1)
+            self.session.add(member)
+
+        else:
+            self.logger.error("ElementException :  Cannot create Member, Tweet is not valid !")
+            raise ElementException  # FIXME : Take care
+
+    def update_member(self, member):
+        """
+        Updates member values.
+        Increments counter by 1, and changes updated field
+        """
+        if (member.has_author() and member.has_hashtag()):
+            member.update()
+            self.session.add(member)
+
+        else:
+            self.logger.error("ElementException :  Cannot update Member, Member is not valid !")
+            raise ElementException  # FIXME : Take care
 
 
 class Authentification(AuthHandler):

@@ -26,8 +26,8 @@ class Trigger():
 
         #Counter
         print "Starting counter"
-        self.c = Counter(data.engine_url)
-        self.c.start()
+        #self.c = Counter(data.engine_url)
+        #self.c.start()
 
         # FIXME: Must create a wrapper to display them all periodically here
         # LeaderBoard
@@ -77,8 +77,8 @@ class Trigger():
         print ""
         print "Stopping Streamer"
         self.h.stop()
-        print "Stopping Counter"
-        self.c.stop()
+        #print "Stopping Counter"
+        #self.c.stop()
         #print "Stopping LeaderBoard"
         #self.l.stop()
         print "Stopping Command Line"
