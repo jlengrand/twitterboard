@@ -54,7 +54,7 @@ class StreamSaverListener(StreamListener):
         # here i should update members now.
         self.update_members(tweet)
 
-        self.cpt += 1
+        #self.cpt += 1
 
         if self.cpt >= 1:
             self.session.commit()  # force saving changes
@@ -87,7 +87,7 @@ class StreamSaverListener(StreamListener):
         m_query = self.session.query(Member).filter(Member.author == auth).filter(Member.hashtag == hasht)
 
         reslen = len(m_query.all())
-        if reslen >= 1:
+        if reslen > 1:
             print "Error: Duplicate members found."
         elif reslen == 0:
             print "No member found, creating"
@@ -106,9 +106,12 @@ class StreamSaverListener(StreamListener):
             member = Member(tweet.author, tweet.hashtag, 1)
             self.session.add(member)
 
+            self.cpt += 1
         else:
-            self.logger.error("ElementException :  Cannot create Member, Tweet is not valid !")
-            raise ElementException  # FIXME : Take care
+            #self.logger.error("ElementException :  Cannot create Member, Tweet is not valid !")
+            print "ElementException :  Cannot create Member, Tweet is not valid !"
+            #raise ElementException  # FIXME : Take care
+            pass
 
     def update_member(self, member):
         """
@@ -119,8 +122,10 @@ class StreamSaverListener(StreamListener):
             member.update()
             self.session.add(member)
 
+            self.cpt += 1
         else:
-            self.logger.error("ElementException :  Cannot update Member, Member is not valid !")
+            #self.logger.error("ElementException :  Cannot update Member, Member is not valid !")
+            print "ElementException :  Cannot update Member, Member is not valid !"
             raise ElementException  # FIXME : Take care
 
 

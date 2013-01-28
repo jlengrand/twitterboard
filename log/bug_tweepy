@@ -1,0 +1,36 @@
+ found, creating
+ElementException :  Cannot create Member, Tweet is not valid !
+No member found, creating
+No member found, creating
+Error: Duplicate members found.
+Error: Duplicate members found.
+No member found, creating
+Error: Duplicate members found.
+Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 552, in __bootstrap_inner
+    self.run()
+  File "/usr/lib/python2.7/threading.py", line 505, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/tweepy/streaming.py", line 117, in _run
+    self._read_loop(resp)
+  File "/home/jll/.virtualenvs/twiderboard/local/lib/python2.7/site-packages/tweepy/streaming.py", line 150, in _read_loop
+    c = resp.read(1)
+  File "/usr/lib/python2.7/httplib.py", line 541, in read
+    return self._read_chunked(amt)
+  File "/usr/lib/python2.7/httplib.py", line 574, in _read_chunked
+    line = self.fp.readline(_MAXLINE + 1)
+  File "/usr/lib/python2.7/socket.py", line 476, in readline
+    data = self._sock.recv(self._rbufsize)
+  File "/usr/lib/python2.7/ssl.py", line 241, in recv
+    return self.read(buflen)
+  File "/usr/lib/python2.7/ssl.py", line 160, in read
+    return self._sslobj.read(len)
+SSLError: The read operation timed out
+
+^C
+Stopping Streamer
+
+
+--------------------------------
+

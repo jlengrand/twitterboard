@@ -35,7 +35,6 @@ if oa != 'True':
     oauth = False
 else:
     oauth = True
-print oauth == True
 keys_root = parser.get('keys', 'root')
 oauth_name = parser.get('keys', 'oauth')
 basic_name = parser.get('keys', 'basic')
