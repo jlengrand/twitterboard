@@ -7,6 +7,7 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import Boolean
 from sqlalchemy import DateTime
+from sqlalchemy import Index
 
 from encodingUtils import EncodingUtils
 
@@ -25,6 +26,9 @@ class TrendyHashtag(Base):
     created = Column(DateTime)
     updated = Column(DateTime)  # used to track when is was last stopped/started
     active = Column(Boolean)  # Whether the hashtag is currently tracked or not.
+
+    # places an index on hashtags
+    Index('idx_hashtag', 'hashtag')
 
     def __init__(self, hashtag, active=True):
         self.hashtag = hashtag
@@ -49,6 +53,9 @@ class Member(Base):
     created = Column(DateTime)  # date of creation of the member
     updated = Column(DateTime)  # date of last count update
     count = Column(Integer)  # Number of tweets for this couple author/hashtag
+
+    # places an index on members, for a given hashtag
+    Index('idx_member', 'author', 'hashtag')
 
     def __init__(self, author, hashtag, count=0):
         self.author = author
