@@ -28,7 +28,7 @@ class TrendyHashtag(Base):
     active = Column(Boolean)  # Whether the hashtag is currently tracked or not.
 
     # places an index on hashtags
-    Index('idx_hashtag', 'hashtag')
+    __table_args__ = (Index('idx_hashtag', 'hashtag'), )
 
     def __init__(self, hashtag, active=True):
         self.hashtag = hashtag
@@ -55,7 +55,7 @@ class Member(Base):
     count = Column(Integer)  # Number of tweets for this couple author/hashtag
 
     # places an index on members, for a given hashtag
-    Index('idx_member', 'author', 'hashtag')
+    __table_args__ = (Index('idx_member', 'author', 'hashtag'), )
 
     def __init__(self, author, hashtag, count=0):
         self.author = author
