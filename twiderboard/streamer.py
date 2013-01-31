@@ -50,7 +50,8 @@ class StreamSaverListener(StreamListener):
 
         tweet.get_main_tag(self.hashtags)  # FIXME: should be part of the init, shouldn t it ?
 
-        #self.session.add(tweet)
+        # adds current tweet to the tweet table for logging.
+        self.session.add(tweet)
         # here i should update members now.
         self.update_members(tweet)
 
