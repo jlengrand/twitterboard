@@ -3,11 +3,18 @@
 
 from ConfigParser import SafeConfigParser
 import os
-
+import sys
 
 parser = SafeConfigParser()
 # ini file should be located one folder up from data module (in main repo)
 ini_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'basic.ini')
+
+# checking whether file exists
+print "Checking ini file in : %s" % (ini_path)
+if not os.path.exists(ini_path):
+    print "Ini file not found. Exiting!"
+    sys.exit(0)
+
 parser.read(ini_path)
 
 # Base :
