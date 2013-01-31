@@ -1,0 +1,41 @@
+Member found, updating
+Exception in thread Thread-5:
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/threading.py", line 551, in __bootstrap_inner
+    self.run()
+  File "/usr/local/lib/python2.7/threading.py", line 504, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "/usr/local/lib/python2.7/site-packages/tweepy/streaming.py", line 117, in _run
+    self._read_loop(resp)
+  File "/usr/local/lib/python2.7/site-packages/tweepy/streaming.py", line 161, in _read_loop
+    self._data(next_status_obj)
+  File "/usr/local/lib/python2.7/site-packages/tweepy/streaming.py", line 138, in _data
+    if self.listener.on_data(data) is False:
+  File "/usr/local/lib/python2.7/site-packages/tweepy/streaming.py", line 34, in on_data
+    if self.on_status(status) is False:
+  File "/home/jlengrand/twitterboard/twiderboard/streamer.py", line 55, in on_status
+    self.update_members(tweet)
+  File "/home/jlengrand/twitterboard/twiderboard/streamer.py", line 89, in update_members
+    reslen = len(m_query.all())
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2140, in all
+    return list(self)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2252, in __iter__
+    return self._execute_and_instances(context)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/orm/query.py", line 2267, in _execute_and_instances
+    result = conn.execute(querycontext.statement, self._params)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 664, in execute
+    params)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 764, in _execute_clauseelement
+    compiled_sql, distilled_params
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 878, in _execute_context
+    context)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/base.py", line 871, in _execute_context
+    context)
+  File "/usr/local/lib/python2.7/site-packages/sqlalchemy/engine/default.py", line 320, in do_execute
+    cursor.execute(statement, parameters)
+  File "/usr/local/lib/python2.7/site-packages/MySQLdb/cursors.py", line 201, in execute
+    self.errorhandler(self, exc, value)
+  File "/usr/local/lib/python2.7/site-packages/MySQLdb/connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+OperationalError: (OperationalError) (2013, 'Lost connection to MySQL server during query') 'SELECT member.id AS member_id, member.author AS member_author, member.hashtag AS member_hashtag, member.created AS member_created, member.updat
+ed AS member_updated, member.count AS member_count \nFROM member \nWHERE member.author = %s AND member.hashtag = %s' (u'ArdisGrimes', u'#nowplaying')
