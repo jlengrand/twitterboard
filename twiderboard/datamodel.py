@@ -57,6 +57,9 @@ class Member(Base):
     # places an index on members, for a given hashtag
     __table_args__ = (Index('idx_member', 'author', 'hashtag'), )
 
+    # places an index on members, to create leaderboards faster
+    __table_args__ = (Index('idx_leader', 'hashtag', 'count', 'author'), )
+
     def __init__(self, author, hashtag, count=0):
         self.author = author
         self.hashtag = hashtag
