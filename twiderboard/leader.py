@@ -106,7 +106,7 @@ class LeaderBoard():
         The list is of max size size, but can be smaller of even empty if no
         user has been detected yet.
         """
-        l_query = session.query(Member).filter(Member.hashtag == hashtag).order_by(desc(Member.count))
+        l_query = session.query(Member).filter(Member.hashtag == hashtag).order_by(desc(Member.count)).limit(size)
         leaders = l_query.all()
         if size > 0:
             leaders = leaders[0:size]
