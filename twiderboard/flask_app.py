@@ -7,6 +7,8 @@ from sqlalchemy import func
 
 import data
 from datamodel import TrendyHashtag
+from datamodel import Tweet
+from datamodel import Member
 
 def connect():
     """
@@ -26,13 +28,23 @@ def connect():
 def nb_trendy():
 
     session, engine = connect()
+
+    # requests active hashtags
     query = session.query(func.count(TrendyHashtag.id)).filter(TrendyHashtag.active == True)
-    val = query.first()[0]
+    hashs = query.first()[0]
+
+    #requests number of tweets
+    query = session.query(func.count(Tweet.id))
+    tweets = query.first()[0]
+
+    #requests number of members
+    query = session.query(func.count(Member.id))
+    members = query.first()[0]
 
     session.close()
     engine.dispose()
 
-    return jsonify(hashs=val)
+    return jsonify(hashs=hashs, tweets=tweets, members=members)
 
 
 @app.route('/_add_numbers')

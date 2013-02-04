@@ -20,7 +20,7 @@ class TrendyHashtag(Base):
     Keeps history of all hashtags marked in the past, using an active boolean.
     Used for tracability and trendy hashtags sharing between Threads
     """
-    __tablename__ = "trendy_hashtags"
+    __tablename__ = "trendy_hashtag"
     id = Column(Integer, primary_key=True)
     hashtag = Column(String(200))  # should begin with # is it is really a hashtag
     created = Column(DateTime)
@@ -98,7 +98,7 @@ class Tweet(Base):
     Class that fully represents a tweet as it is stored in the database.
     It is different from the structure that can be found in tweepy
     """
-    __tablename__ = "tweets"
+    __tablename__ = "tweet"
     id = Column(Integer, primary_key=True)
     hashtag = Column(String(200))  # Hashtag that is tracked
     text = Column(String(200))  # Content of the tweet

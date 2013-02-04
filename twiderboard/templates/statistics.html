@@ -6,6 +6,8 @@
             url : $SCRIPT_ROOT + '/nb_trendy',
             success: function(data) {
               $('#hashs').text(data.hashs);
+              $('#tweets').text(data.tweets);
+              $('#members').text(data.members);
             },
             complete: function() {
               setTimeout(worker, 1000);
@@ -15,7 +17,15 @@
     </script>
 <h1>Database information</h1>
 <p>
-    Current number of hastags in database :
+    Current number of active hastags in database :
     <span id='hashs'>?</span>
+</p>
+<p>
+    Current number of tweets in database :
+    <span id='tweets'>?</span>
+</p>
+<p>
+    Current number of members in database :
+    <span id='members'>?</span>
 </p>
 {% endblock %}
