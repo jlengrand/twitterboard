@@ -1,4 +1,4 @@
-import re
+#import re
 import datetime
 
 from sqlalchemy.ext.declarative import declarative_base
