@@ -225,11 +225,11 @@ class HashtagLogger():
         session, engine = self.connect()
 
         if len(self.trendy) > 0:
-            listener = StreamSaverListener(self.trendy, session, engine)
+            #listener = StreamSaverListener(self.trendy, session, engine)
 
-            self.stream = Stream(self.auth.get_auth(), listener)
+            #self.stream = Stream(self.auth.get_auth(), listener)
             print self.trendy
-            self.stream.filter(track=self.trendy, async=True)
+            #self.stream.filter(track=self.trendy, async=True)
         else:
             print "No hashtag to track!"
 

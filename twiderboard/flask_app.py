@@ -26,7 +26,7 @@ def connect():
 def nb_trendy():
 
     session, engine = connect()
-    query = session.query(func.count(TrendyHashtag.id))
+    query = session.query(func.count(TrendyHashtag.id)).filter(TrendyHashtag.active == True)
     val = query.first()[0]
 
     session.close()
