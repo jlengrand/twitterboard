@@ -4,12 +4,12 @@ app = Flask(__name__)
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
+
+import data
 from datamodel import TrendyHashtag
 
-#hash_value=3
-url = "mysql+mysqldb://root:test@localhost:3306/twiderboard_test"
 # creates engine, tries to create all the tables needed later on
-engine = create_engine(url, echo=False)
+engine = create_engine(data.engine_url, echo=False)
 # initiates session to the database, tries to create proper session
 Session = sessionmaker(bind=engine)
 session = Session()
