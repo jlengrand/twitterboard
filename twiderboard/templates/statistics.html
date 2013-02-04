@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+<script>
+        (function worker() {
+          $.ajax({
+            url : $SCRIPT_ROOT + '/nb_trendy',
+            success: function(data) {
+              $('#hashs').text(data.hashs);
+            },
+            complete: function() {
+              setTimeout(worker, 1000);
+            }
+          });
+        })();
+    </script>
+<h1>Database information</h1>
+<p>
+    Current number of hastags in database :
+    <span id='hashs'>?</span>
+</p>
+{% endblock %}
