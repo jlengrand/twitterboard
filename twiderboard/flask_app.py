@@ -8,17 +8,30 @@ from sqlalchemy import func
 import data
 from datamodel import TrendyHashtag
 
-# creates engine, tries to create all the tables needed later on
-engine = create_engine(data.engine_url, echo=False)
-# initiates session to the database, tries to create proper session
-Session = sessionmaker(bind=engine)
-session = Session()
+def connect():
+    """
+    Separated so that the method can be run in each created thread.
+    Initiates connexion to the database and starts a Session to be used to query it.
+    Returns the session used to communicate with the database
+    """
+    # creates engine, tries to create all the tables needed later on
+    engine = create_engine(data.engine_url, echo=data.debug)
+    # initiates session to the database, tries to create proper session
+    Session = sessionmaker(bind=engine)
+
+    return Session(), engine  # Bridges class to db
 
 
 @app.route('/nb_trendy')
 def nb_trendy():
+
+    session, engine = connect()
     query = session.query(func.count(TrendyHashtag.id))
     val = query.first()[0]
+
+    session.close()
+    engine.dispose()
+
     return jsonify(hashs=val)
 
 

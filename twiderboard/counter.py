@@ -88,12 +88,13 @@ class Counter():
         Every time is it called, perform a check of the database, searches
         for elements that have not been crawled yet and displays them.
         """
-        session = self.connect()
+        session, engine = self.connect()
         query = session.query(Tweet).order_by(Tweet.id)
         for tweet in query:
             self.logger.info(tweet.hashtag + " " + tweet.author)
 
         session.close()
+        engine.dispose()
 
     def count(self):
         """
@@ -191,7 +192,7 @@ class Counter():
         """
         self.logger.info("#########################################")
 
-        session = self.connect()
+        session, engine = self.connect()
         self.member_count()
         query = session.query(Member).order_by(Member.id).all()
         ptr = 0
@@ -201,6 +202,7 @@ class Counter():
                 self.logger.info(q)
 
         session.close()
+        engine.dispose()
 
     def member_count(self):
         """
@@ -208,12 +210,13 @@ class Counter():
 
         Returns the number of Members in table
         """
-        session = self.connect()
+        session, engine = self.connect()
         query = session.query(Member).order_by(Member.id).all()
 
         self.logger.info("Members: %d" % (len(query)))
 
         session.close()
+        engine.dispose()
 
     def commit_counts(self, session):
         """
