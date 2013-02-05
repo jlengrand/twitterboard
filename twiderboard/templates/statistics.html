@@ -1,19 +1,42 @@
 {% extends "layout.html" %}
 {% block body %}
 <script>
-  (function worker() {
-    $.ajax({
-      url : $SCRIPT_ROOT + '/nb_trendy',
-      success: function(data) {
-        $('#hashs').text(data.hashs);
-        $('#tweets').text(data.tweets);
-        $('#members').text(data.members);
-      },
-      complete: function() {
-        setTimeout(worker, 1000);
+(function worker() {
+  $.ajax({
+    url : $SCRIPT_ROOT + '/nb_trendy',
+    success: function(data) {
+      $('#hashs').text(data.hashs);
+      $('#tweets').text(data.tweets);
+      $('#members').text(data.members);
+    },
+    complete: function() {
+      setTimeout(worker, 1000);
+    }
+  });
+})();
+</script>
+<script type=text/javascript>
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_add_hashtag', {
+        new_hash: $('input[name="new_hash"]').val()
+      }, function(data) {
+        $('#hash').text(data.hash);
+        $('input[name=new_hash]').focus().select();
+      });
+      return false;
+    };
+
+    $('new_hash#calculate').bind('click', submit_form);
+
+    $('input[type=text]').bind('keydown', function(e) {
+      if (e.keyCode == 13) {
+        submit_form(e);
       }
     });
-  })();
+
+    $('input[name=new_hash]').focus();
+  });
 </script>
 <h1>Database information</h1>
 <p>
@@ -27,5 +50,11 @@
 <p>
   Current number of members in database :
   <span id='members'>?</span>
+</p>
+<h1>Hashtags</h1>
+<p>
+  <input type=text size=5 name='new_hash'>
+  <span id='hash'></span>
+  <a href=# id='calculate'>Add hashtag!</a>
 </p>
 {% endblock %}

@@ -57,8 +57,8 @@ def add_hashtag():
 @app.route('/')
 def index():
     #return render_template('index_dyn.html')
-    #return render_template('statistics.html')
-    return render_template('add_hash.html')
+    return render_template('statistics.html')
+    #return render_template('add_hash.html')
 
 if __name__ == '__main__':
     app.run()
