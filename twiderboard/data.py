@@ -2,6 +2,8 @@
 # all inforamation that will be used by other modules
 
 from ConfigParser import SafeConfigParser
+from ConfigParser import NoOptionError
+
 import os
 import sys
 
@@ -55,3 +57,10 @@ html = parser.get('html', 'html')
 tmpl = parser.get('html', 'tmpl')
 html_file = os.path.join(html_root, html)
 tmpl_file = os.path.join(html_root, tmpl)
+
+# debug
+
+try:
+    streamer_status = parser.get('debug', 'streamer')
+except NoOptionError:
+    streamer_status=True  # Activates streaming by default
