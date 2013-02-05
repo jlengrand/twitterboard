@@ -1,31 +1,61 @@
 {% extends "layout.html" %}
 {% block body %}
 <script>
-        (function worker() {
-          $.ajax({
-            url : $SCRIPT_ROOT + '/nb_trendy',
-            success: function(data) {
-              $('#hashs').text(data.hashs);
-              $('#tweets').text(data.tweets);
-              $('#members').text(data.members);
-            },
-            complete: function() {
-              setTimeout(worker, 1000);
-            }
-          });
-        })();
-    </script>
+  (function worker() {
+    $.ajax({
+      url : $SCRIPT_ROOT + '/nb_trendy',
+      success: function(data) {
+        $('#hashs').text(data.hashs);
+        $('#tweets').text(data.tweets);
+        $('#members').text(data.members);
+      },
+      complete: function() {
+        setTimeout(worker, 1000);
+      }
+    });
+  })();
+</script>
+<script type=text/javascript>
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_add_hashtag', {
+        a: $('input[name="new_hash"]').val()
+      }, function(data) {
+        $('#result').text(data.result);
+        $('input[name=new_hash').focus().select();
+      });
+      return false;
+    };
+
+    $('new_hash#add_hash').bind('click', submit_form);
+
+    $('input[type=text]').bind('keydown', function(e) {
+      if (e.keyCode == 13) {
+        submit_form(e);
+      }
+    });
+
+    $('input[name=new_hash]').focus();
+  });
+</script>
 <h1>Database information</h1>
 <p>
-    Current number of active hastags in database :
-    <span id='hashs'>?</span>
+  Current number of active hastags in database :
+  <span id='hashs'>?</span>
 </p>
 <p>
-    Current number of tweets in database :
-    <span id='tweets'>?</span>
+  Current number of tweets in database :
+  <span id='tweets'>?</span>
 </p>
 <p>
-    Current number of members in database :
-    <span id='members'>?</span>
+  Current number of members in database :
+  <span id='members'>?</span>
+</p>
+
+<h2>Hashtags</h2>
+<p> <input type=text size=10 name=new_hash>
+  <a href='#' id='add_hash'>Add new hashtag!</a>
+  <br/>
+  <span id='result'>?</span>
 </p>
 {% endblock %}

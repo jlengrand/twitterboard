@@ -24,6 +24,7 @@ def connect():
 
     return Session(), engine  # Bridges class to db
 
+
 @app.route('/nb_trendy')
 def nb_trendy():
 
@@ -47,11 +48,11 @@ def nb_trendy():
     return jsonify(hashs=hashs, tweets=tweets, members=members)
 
 
-@app.route('/_add_numbers')
-def add_numbers():
-    a = request.args.get('a', 0, type=int)
-    b = request.args.get('b', 0, type=int)
-    return jsonify(result=a + b)
+@app.route('/_add_hashtag')
+def add_hashtag():
+    new_hash = request.args.get('new_hash', 0)
+    print "Request to add %s !" % (new_hash)
+    return jsonify(result="Added %s" % (new_hash))
 
 
 @app.route('/')
