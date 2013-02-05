@@ -10,28 +10,24 @@ from datamodel import TrendyHashtag
 from datamodel import Tweet
 from datamodel import Member
 
-# def connect():
-#     """
-#     Separated so that the method can be run in each created thread.
-#     Initiates connexion to the database and starts a Session to be used to query it.
-#     Returns the session used to communicate with the database
-#     """
-#     # creates engine, tries to create all the tables needed later on
-#     engine = create_engine(data.engine_url, echo=data.debug)
-#     # initiates session to the database, tries to create proper session
-#     Session = sessionmaker(bind=engine)
 
-#     return Session(), engine  # Bridges class to db
+def connect():
+    """
+    Separated so that the method can be run in each created thread.
+    Initiates connexion to the database and starts a Session to be used to query it.
+    Returns the session used to communicate with the database
+    """
+    # creates engine, tries to create all the tables needed later on
+    engine = create_engine(data.engine_url, echo=data.debug)
+    # initiates session to the database, tries to create proper session
+    Session = sessionmaker(bind=engine)
 
-engine = create_engine(data.engine_url, echo=data.debug)
-Session = sessionmaker(bind=engine)
-session = Session()
-
+    return Session(), engine  # Bridges class to db
 
 @app.route('/nb_trendy')
 def nb_trendy():
 
-    # session, engine = connect()
+    session, engine = connect()
 
     # requests active hashtags
     query = session.query(func.count(TrendyHashtag.id)).filter(TrendyHashtag.active == True)
@@ -45,8 +41,8 @@ def nb_trendy():
     query = session.query(func.count(Member.id))
     members = query.first()[0]
 
-    #session.close()
-    #engine.dispose()
+    session.close()
+    engine.dispose()
 
     return jsonify(hashs=hashs, tweets=tweets, members=members)
 
@@ -63,5 +59,5 @@ def index():
     #return render_template('index_dyn.html')
     return render_template('statistics.html')
 
-#if __name__ == '__main__':
-#    app.run()
+if __name__ == '__main__':
+    app.run()
