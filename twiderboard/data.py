@@ -61,6 +61,10 @@ tmpl_file = os.path.join(html_root, tmpl)
 # debug
 
 try:
-    streamer_status = parser.get('debug', 'streamer')
+    ss = parser.get('debug', 'streamer')
+    if ss != 'True':
+        streamer_status = False
+    else:
+        streamer_status = True
 except NoOptionError:
     streamer_status=True  # Activates streaming by default

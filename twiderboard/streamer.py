@@ -6,7 +6,6 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy.auth import BasicAuthHandler
 from tweepy.auth import AuthHandler
-
 from tweepy import Stream
 
 from datamodel import Base
@@ -225,11 +224,14 @@ class HashtagLogger():
         session, engine = self.connect()
 
         if len(self.trendy) > 0:
-            #listener = StreamSaverListener(self.trendy, session, engine)
-
-            #self.stream = Stream(self.auth.get_auth(), listener)
             print self.trendy
-            #self.stream.filter(track=self.trendy, async=True)
+
+            if data.streamer_status:  # only if debug mode is not active
+                listener = StreamSaverListener(self.trendy, session, engine)
+                self.stream = Stream(self.auth.get_auth(), listener)
+                self.stream.filter(track=self.trendy, async=True)
+            else:
+                print "Debug mode activated. No connexion to Twitter"
         else:
             print "No hashtag to track!"
 
