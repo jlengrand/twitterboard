@@ -15,29 +15,6 @@
     });
   })();
 </script>
-<script type=text/javascript>
-  $(function() {
-    var submit_form = function(e) {
-      $.getJSON($SCRIPT_ROOT + '/_add_hashtag', {
-        a: $('input[name="new_hash"]').val()
-      }, function(data) {
-        $('#result').text(data.result);
-        $('input[name=new_hash').focus().select();
-      });
-      return false;
-    };
-
-    $('new_hash#add_hash').bind('click', submit_form);
-
-    $('input[type=text]').bind('keydown', function(e) {
-      if (e.keyCode == 13) {
-        submit_form(e);
-      }
-    });
-
-    $('input[name=new_hash]').focus();
-  });
-</script>
 <h1>Database information</h1>
 <p>
   Current number of active hastags in database :
@@ -50,12 +27,5 @@
 <p>
   Current number of members in database :
   <span id='members'>?</span>
-</p>
-
-<h2>Hashtags</h2>
-<p> <input type=text size=10 name=new_hash>
-  <a href='#' id='add_hash'>Add new hashtag!</a>
-  <br/>
-  <span id='result'>?</span>
 </p>
 {% endblock %}

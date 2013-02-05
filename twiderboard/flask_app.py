@@ -50,15 +50,15 @@ def nb_trendy():
 
 @app.route('/_add_hashtag')
 def add_hashtag():
-    new_hash = request.args.get('new_hash', 0)
-    print "Request to add %s !" % (new_hash)
-    return jsonify(result="Added %s" % (new_hash))
+    new_hash = request.args.get('new_hash')
+    return jsonify(hash="Adding %s !" % (new_hash))
 
 
 @app.route('/')
 def index():
     #return render_template('index_dyn.html')
-    return render_template('statistics.html')
+    #return render_template('statistics.html')
+    return render_template('add_hash.html')
 
 if __name__ == '__main__':
     app.run()

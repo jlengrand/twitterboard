@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block body %}
+<script>
+(function worker() {
+  $.ajax({
+    url : $SCRIPT_ROOT + '/nb_trendy',
+    success: function(data) {
+      $('#hashs').text(data.hashs);
+      $('#tweets').text(data.tweets);
+      $('#members').text(data.members);
+    },
+    complete: function() {
+      setTimeout(worker, 1000);
+    }
+  });
+})();
+</script>
+<script type=text/javascript>
+$(function() {
+  $(".button").click(function() {
+    $(function() {
+  $('.error').hide();
+  $(".button").click(function() {
+    // validate and process form here
+    $('.error').hide();
+      var name = $("input#new_hash").val();
+        if (name == "") {
+      $("label#new_hash_error").show();
+      $("input#new_hash").focus();
+      return false;
+    }
+  });
+});
+  });
+});
+</script>
+<h1>Database information</h1>
+<p>
+  Current number of active hastags in database :
+  <span id='hashs'>?</span>
+</p>
+<p>
+  Current number of tweets in database :
+  <span id='tweets'>?</span>
+</p>
+<p>
+  Current number of members in database :
+  <span id='members'>?</span>
+</p>
+
+<h2>Hashtags</h2>
+<p>
+  <div id="add_hash">
+    <form name="add" action="">
+      <fieldset>
+        <input type="text" name="new_hash" id="new_hash" class="text-input" size=10 />
+        <label class="error" for="new_hash" id="new_hash_error">Hash not empty!</label>
+        <input type="submit" name="submit" class="button" id="add_hash" value="Add!" />
+      </fieldset>
+    </form>
+  </div>
+  <span id='result'></span>
+</p>
+{% endblock %}
