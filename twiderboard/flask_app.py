@@ -3,6 +3,8 @@ from flask import Flask, jsonify, render_template, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
+from sqlalchemy import desc
+
 
 import data
 from datamodel import TrendyHashtag
@@ -17,6 +19,7 @@ h = HashtagLogger(data.engine_url, oauth=data.oauth)
 h.start()
 
 
+## Utilities
 def connect():
     """
     Separated so that the method can be run in each created thread.
@@ -29,6 +32,28 @@ def connect():
     Session = sessionmaker(bind=engine)
 
     return Session(), engine  # Bridges class to db
+
+
+## Ajax queries
+@app.route('/trendy')
+def trendy():
+
+    session, engine = connect()
+
+    # requests active hashtags
+    h_query = session.query(TrendyHashtag).filter(TrendyHashtag.active == True).order_by(desc(TrendyHashtag.created))
+    hashtags = h_query.all()
+
+    trendy = []
+    for h in hashtags:
+        trendy.append([h.hashtag, 1])
+
+    session.close()
+    engine.dispose()
+
+    trendy = [[1, 2], [3, 4], [5, 6]]
+    #trendy = 'plop'
+    return jsonify(trendy=trendy)
 
 
 @app.route('/nb_trendy')
@@ -73,6 +98,7 @@ def stop():
     return "Session closed"
 
 
+## Static part
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -86,6 +112,7 @@ def statistics():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

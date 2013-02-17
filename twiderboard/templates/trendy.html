@@ -1,1 +1,28 @@
-I'm trendy!
+<script>
+(function worker() {
+  $.ajax({
+    url : $SCRIPT_ROOT + '/trendy',
+    success: function(data) {
+      console.log(data.trendy);
+      var res = "<table>";
+      var link = "<a href=\"/remove_hashtag/\">Remove</a>";
+      for (i=0;i<data.trendy[0].length;i++){
+        res = res + "<tr>";
+        for (i=0;i<data.trendy.length;i++){
+            res = res + "<td>" + data.trendy[i][0] + "</td>";
+            res = res + "<td>" + link + "</td>";
+        }
+        res = res + "</tr>";
+      }
+      res = res + "</table>";
+
+      console.log(res);
+      $('#trendy').html(res);
+    },
+    complete: function() {
+      setTimeout(worker, 1000);
+    }
+  });
+})();
+</script>
+<span id='trendy'></span>
