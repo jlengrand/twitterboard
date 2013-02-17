@@ -9,7 +9,6 @@ import sys
 
 import data
 
-from counter import Counter
 from streamer import HashtagLogger
 
 

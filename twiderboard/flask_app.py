@@ -10,12 +10,6 @@ from datamodel import TrendyHashtag
 from datamodel import Tweet
 from datamodel import Member
 
-from streamer import HashtagLogger
-
-
-import signal
-import sys
-
 
 def connect():
     """
@@ -64,24 +58,5 @@ def add_hashtag():
 def index():
     return render_template('statistics.html')
 
-
-class Twiderboard():
-    def __init__(self):
-        # registering the signal to stop command line
-        signal.signal(signal.SIGINT, self.stop_handler)
-
-        print "Starting streamer"
-        self.h = HashtagLogger(data.engine_url, oauth=data.oauth)
-        self.h.start()
-
-        app.run()
-
-    def stop_handler(self, signal, frame):
-        print "Stopping Streamer"
-        self.h.stop()
-        print "Stopping Command Line"
-        sys.exit(0)
-
-
 if __name__ == '__main__':
-    Twiderboard()
+    app.run()

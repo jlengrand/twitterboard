@@ -14,16 +14,4 @@ def run():
     app.run()
 
 if __name__ == '__main__':
-    app.debug = True
-    print "starting process"
-    server = Process(target=run)
-    server.start()
-
-    print "sleeping"
-    time.sleep(5)
-
-    print "ending process"
-    server.terminate()
-    server.join()
-
-    print "bye..."
+    app.run()

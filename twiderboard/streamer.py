@@ -286,6 +286,8 @@ class HashtagLogger():
         self.restart()
         engine.dispose()
 
+        return hashtag
+
     def commit_hashtag(self, session):
         """
         Takes care of errors that can happen if database if locked when session is commited
@@ -324,6 +326,8 @@ class HashtagLogger():
 
         self.restart()
         engine.dispose()
+
+        return hashtag
 
     def connect(self):
         """
