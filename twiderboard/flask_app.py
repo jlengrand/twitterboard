@@ -61,6 +61,12 @@ def add_hashtag():
     return jsonify(hash="Adding %s !" % (hashtag))
 
 
+@app.route('/remove_hashtag')
+def remove_hashtag():
+    hashtag = h.remove_hashtag('plop')
+    return hashtag
+
+
 @app.route('/stop')
 def stop():
     h.stop()
