@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, render_template, request
-app = Flask(__name__)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,6 +8,13 @@ import data
 from datamodel import TrendyHashtag
 from datamodel import Tweet
 from datamodel import Member
+
+from streamer import HashtagLogger
+
+
+app = Flask(__name__)
+h = HashtagLogger(data.engine_url, oauth=data.oauth)
+h.start()
 
 
 def connect():
@@ -51,7 +57,14 @@ def nb_trendy():
 @app.route('/_add_hashtag')
 def add_hashtag():
     new_hash = request.args.get('new_hash')
-    return jsonify(hash="Adding %s !" % (new_hash))
+    hashtag = h.add_hashtag(new_hash)  # just to check we create the same hashtag
+    return jsonify(hash="Adding %s !" % (hashtag))
+
+
+@app.route('/stop')
+def stop():
+    h.stop()
+    return "Session closed"
 
 
 @app.route('/')
@@ -59,4 +72,4 @@ def index():
     return render_template('statistics.html')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
