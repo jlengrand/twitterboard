@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block body %}
+{% block restbody %}
 <script>
 (function worker() {
   $.ajax({
@@ -15,29 +15,6 @@
   });
 })();
 </script>
-<script type=text/javascript>
-  $(function() {
-    var submit_form = function(e) {
-      $.getJSON($SCRIPT_ROOT + '/_add_hashtag', {
-        new_hash: $('input[name="new_hash"]').val()
-      }, function(data) {
-        $('#hash').text(data.hash);
-        $('input[name=new_hash]').focus().select();
-      });
-      return false;
-    };
-
-    $('a#calculate').bind('click', submit_form);
-
-    $('input[type=text]').bind('keydown', function(e) {
-      if (e.keyCode == 13) {
-        submit_form(e);
-      }
-    });
-
-    $('input[name=new_hash]').focus();
-  });
-</script>
 <h1>Database information</h1>
 <p>
   Current number of active hastags in database :
@@ -50,12 +27,5 @@
 <p>
   Current number of members in database :
   <span id='members'>?</span>
-</p>
-<h1>Hashtags</h1>
-<p>
-  <input type=text size=5 name='new_hash'>
-  <span id='hash'></span>
-  </br>
-  <a href=# id='calculate'>Add hashtag!</a>
 </p>
 {% endblock %}

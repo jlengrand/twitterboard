@@ -5,4 +5,8 @@
 <script type=text/javascript>
   var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script>
-{% block body %}{% endblock %}
+{% block body %}
+{% include "top_bar.html" %}
+{% block restbody %}
+{% endblock %}
+{% endblock %}
