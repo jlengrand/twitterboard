@@ -46,7 +46,7 @@ def trendy():
 
     trendy = []
     for h in hashtags:
-        trendy.append([h.hashtag, 1])
+        trendy.append([h.hashtag[1:], 1])
 
     session.close()
     engine.dispose()
@@ -82,14 +82,15 @@ def nb_trendy():
 @app.route('/_add_hashtag')
 def add_hashtag():
     new_hash = request.args.get('new_hash')
-    hashtag = h.add_hashtag(new_hash)  # just to check we create the same hashtag
+    hashtag = h.add_hashtag('#' + new_hash)  # just to check we create the same hashtag
     return jsonify(hash="Adding %s !" % (hashtag))
 
 
 @app.route('/remove_hashtag')
 def remove_hashtag():
-    hashtag = h.remove_hashtag('plop')
-    return hashtag
+    to_rm = request.args['hash']
+    h.remove_hashtag('#' + to_rm)
+    return render_template('index.html')
 
 
 @app.route('/stop')
