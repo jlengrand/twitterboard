@@ -51,7 +51,7 @@ def trendy():
     session.close()
     engine.dispose()
 
-    trendy = [[1, 2], [3, 4], [5, 6]]
+    #trendy = [[1, 2], [3, 4], [5, 6]]
     #trendy = 'plop'
     return jsonify(trendy=trendy)
 
