@@ -7,12 +7,12 @@
       var res = "<table>";
       var link = "<a href=\"/remove_hashtag/\">Remove</a>";
       for (i=0;i<data.trendy[0].length;i++){
-        res = res + "<tr>";
         for (i=0;i<data.trendy.length;i++){
-            res = res + "<td>" + data.trendy[i][0] + "</td>";
-            res = res + "<td>" + link + "</td>";
+          res = res + "<tr>";
+          res = res + "<td>" + data.trendy[i][0] + "</td>";
+          res = res + "<td>" + link + "</td>";
+          res = res + "</tr>";
         }
-        res = res + "</tr>";
       }
       res = res + "</table>";
 
@@ -25,4 +25,4 @@
   });
 })();
 </script>
-<span id='trendy'></span>
+<div id='trendy'></div>
