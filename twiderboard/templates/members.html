@@ -4,11 +4,16 @@
     url : $SCRIPT_ROOT + '/get_members?hash={{ hashtag }}&num=10',
     success: function(data) {
       var res = "<table>";
+
+      var twit_link_1 = "<a href=\"http://www.twitter.com/";
+      var twit_link_2 = "\">"
+      var twit_link_3 = "</a>";
+
       for (i=0;i<data.members[0].length;i++){
         for (i=0;i<data.members.length;i++){
           res = res + "<tr>";
           res = res + "<td>" + data.members[i][1] + "</td>";
-          res = res + "<td>" + data.members[i][0] + "</td>";
+          res = res + "<td>" + twit_link_1 + data.members[i][0] + twit_link_2 + data.members[i][0] + twit_link_3 + "</td>";
           res = res + "</tr>";
         }
       }
