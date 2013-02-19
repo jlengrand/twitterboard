@@ -88,7 +88,6 @@ def add_hashtag():
 @app.route('/remove_hashtag')
 def remove_hashtag():
     to_rm = "#" + request.args['hash']
-    print "removing %s" %(to_rm)
     h.remove_hashtag(to_rm)
     return render_template('index.html')
 
@@ -112,6 +111,28 @@ def get_members():
     engine.dispose()
 
     return jsonify(members=members)
+
+
+@app.route('/get_activity')
+def get_activity():
+    max_lim = min(100, int(request.args.get('num')))
+    cur_hash = "#" + request.args.get('hash')
+
+    session, engine = connect()
+
+    # requests active hashtags
+    t_query = session.query(Tweet).filter(Tweet.hashtag == cur_hash).order_by(desc(Tweet.inserted)).limit(max_lim)
+    tweets = t_query.all()
+
+    activity = []
+    for t in tweets:
+        activity.append([t.author, t.text, t.created])
+
+    session.close()
+    engine.dispose()
+
+
+    return jsonify(activity=activity)
 
 
 @app.route('/stop')
