@@ -5,11 +5,16 @@
     success: function(data) {
       var res = "<table>";
 
+      var twit_link_1 = "<a href=\"http://www.twitter.com/";
+      var twit_link_2 = "\">"
+      var twit_link_3 = "</a>";
+
+
       for (i=0;i<data.activity[0].length;i++){
         for (i=0;i<data.activity.length;i++){
           res = res + "<tr>";
           res = res + "<td>" + data.activity[i][2] + "</td>";
-          res = res + "<td>" + data.activity[i][0] + "</td>";
+          res = res + "<td>" + twit_link_1 + data.activity[i][0] + twit_link_2 + data.activity[i][0] + twit_link_3 + "</td>";
           res = res + "<td>" + data.activity[i][1] + "</td>";
           res = res + "</tr>";
         }
