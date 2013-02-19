@@ -121,7 +121,8 @@ def show_user_profile(cur_hash):
     Shall be possible for any hashtag (even inactive), but only active hashtags will
     actually have a link on the webiste.
     """
-    return 'Hashtag %s' % cur_hash
+    #return 'Hashtag %s' % cur_hash
+    return render_template('hashtag.html', hashtag=cur_hash)
 
 
 if __name__ == '__main__':
