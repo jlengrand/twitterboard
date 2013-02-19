@@ -4,14 +4,17 @@
     url : $SCRIPT_ROOT + '/trendy',
     success: function(data) {
       var res = "<table>";
-      var link_1 = "<a href=\"/remove_hashtag?hash=";
-      var link_2 = "\">Remove</a>";
+      var hash_link_1 = "<a href=\"/hashtag/";
+      var hash_link_2 = "\">"
+      var hash_link_3 = "</a>";
+
+      var remove_link_1 = "<a href=\"/remove_hashtag?hash=";
+      var remove_link_2 = "\">Remove</a>";
       for (i=0;i<data.trendy[0].length;i++){
         for (i=0;i<data.trendy.length;i++){
           res = res + "<tr>";
-          res = res + "<td>" + "#" + data.trendy[i][0] + "</td>";
-          res = res + "<td>" + link_1 + data.trendy[i][0] + link_2 + "</td>";
-          //res = res + "<td>" + link_1 + "caca" + link_2 + "</td>";
+          res = res + "<td>" + "#" + hash_link_1 + data.trendy[i][0] + hash_link_2 + data.trendy[i][0] + hash_link_3 + "</td>";
+          res = res + "<td>" + remove_link_1 + data.trendy[i][0] + remove_link_2 + "</td>";
           res = res + "</tr>";
         }
       }

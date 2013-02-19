@@ -50,9 +50,6 @@ def trendy():
 
     session.close()
     engine.dispose()
-
-    #trendy = [[1, 2], [3, 4], [5, 6]]
-    #trendy = 'plop'
     return jsonify(trendy=trendy)
 
 
@@ -115,6 +112,16 @@ def statistics():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+
+@app.route('/hashtag/<cur_hash>')
+def show_user_profile(cur_hash):
+    """
+    Show the data we currently have for this hashtag
+    Shall be possible for any hashtag (even inactive), but only active hashtags will
+    actually have a link on the webiste.
+    """
+    return 'Hashtag %s' % cur_hash
 
 
 if __name__ == '__main__':
