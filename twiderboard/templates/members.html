@@ -1,1 +1,24 @@
+<script>
+(function worker() {
+  $.ajax({
+    url : $SCRIPT_ROOT + '/get_members?hash={{ hashtag }}&num=10',
+    success: function(data) {
+      var res = "<table>";
+      for (i=0;i<data.members[0].length;i++){
+        for (i=0;i<data.members.length;i++){
+          res = res + "<tr>";
+          res = res + "<td>" + data.members[i][1] + "</td>";
+          res = res + "<td>" + data.members[i][0] + "</td>";
+          res = res + "</tr>";
+        }
+      }
+      res = res + "</table>";
+      $('#members').html(res);
+    },
+    complete: function() {
+      setTimeout(worker, 5000);
+    }
+  });
+})();
+</script>
 <div id='members'></div>

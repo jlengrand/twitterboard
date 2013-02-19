@@ -79,7 +79,7 @@ def nb_trendy():
 @app.route('/_add_hashtag')
 def add_hashtag():
     new_hash = request.args.get('new_hash')
-    new_hash =  "#" +new_hash
+    new_hash = "#" + new_hash
     print new_hash
     hashtag = h.add_hashtag(new_hash)  # just to check we create the same hashtag
     return jsonify(hash="Adding %s !" % (hashtag))
@@ -90,6 +90,27 @@ def remove_hashtag():
     to_rm = request.args['hash']
     h.remove_hashtag('#' + to_rm)
     return render_template('index.html')
+
+
+@app.route('/get_members')
+def get_members():
+    max_lim = min(100, int(request.args.get('num')))
+    cur_hash = "#" + request.args.get('hash')
+
+    session, engine = connect()
+
+    # requests active hashtags
+    l_query = session.query(Member).filter(Member.hashtag == cur_hash).order_by(desc(Member.count)).limit(max_lim)
+    leaders = l_query.all()
+
+    members = []
+    for l in leaders:
+        members.append([l.author, l.count])
+
+    session.close()
+    engine.dispose()
+
+    return jsonify(members=members)
 
 
 @app.route('/stop')
