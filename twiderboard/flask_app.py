@@ -79,16 +79,17 @@ def nb_trendy():
 @app.route('/_add_hashtag')
 def add_hashtag():
     new_hash = request.args.get('new_hash')
-    new_hash = "#" + new_hash
-    print new_hash
+    if not new_hash.startswith('#'):
+        new_hash = "#" + new_hash
     hashtag = h.add_hashtag(new_hash)  # just to check we create the same hashtag
     return jsonify(hash="Adding %s !" % (hashtag))
 
 
 @app.route('/remove_hashtag')
 def remove_hashtag():
-    to_rm = request.args['hash']
-    h.remove_hashtag('#' + to_rm)
+    to_rm = "#" + request.args['hash']
+    print "removing %s" %(to_rm)
+    h.remove_hashtag(to_rm)
     return render_template('index.html')
 
 
